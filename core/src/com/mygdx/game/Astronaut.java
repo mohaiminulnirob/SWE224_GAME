@@ -11,26 +11,29 @@ public class Astronaut {
     private Texture texture;
     private Polygon collisionPolygon;
     private static final float SPEED = 150f;
-    private static final float SCALE = 0.3f;
+    private static final float SCALE = 0.3f; // Scale down the astronaut
 
     public Astronaut(float x, float y, Texture texture) {
         position = new Vector2(x, y);
         this.texture = texture;
+
+        // Define the collision polygon (based on the astronaut's shape)
         float[] vertices = {
-                10 * SCALE, 0,
-                (texture.getWidth() - 10) * SCALE, 0,
-                texture.getWidth() * SCALE, 10 * SCALE,
-                texture.getWidth() * SCALE, (texture.getHeight() - 10) * SCALE,
-                (texture.getWidth() - 10) * SCALE, texture.getHeight() * SCALE,
-                10 * SCALE, texture.getHeight() * SCALE,
-                0, (texture.getHeight() - 10) * SCALE,
-                0, 10 * SCALE
+                10 * SCALE, 0, // bottom left
+                (texture.getWidth() - 10) * SCALE, 0, // bottom right
+                texture.getWidth() * SCALE, 10 * SCALE, // right middle
+                texture.getWidth() * SCALE, (texture.getHeight() - 10) * SCALE, // top right
+                (texture.getWidth() - 10) * SCALE, texture.getHeight() * SCALE, // top middle
+                10 * SCALE, texture.getHeight() * SCALE, // top left
+                0, (texture.getHeight() - 10) * SCALE, // left middle
+                0, 10 * SCALE // left bottom
         };
         collisionPolygon = new Polygon(vertices);
         collisionPolygon.setPosition(x, y);
     }
 
     public void update(float delta) {
+        // Ensure astronaut stays within screen bounds
         if (position.x < 0) {
             position.x = 0;
         } else if (position.x > Gdx.graphics.getWidth() - texture.getWidth() * SCALE) {
@@ -45,6 +48,7 @@ public class Astronaut {
     }
 
     public void handleInput() {
+        // Move astronaut based on arrow key input
         if (Gdx.input.isKeyPressed(Keys.LEFT)) {
             position.x -= SPEED * Gdx.graphics.getDeltaTime();
         }
