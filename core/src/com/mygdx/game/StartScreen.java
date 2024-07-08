@@ -6,7 +6,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.Screen;  // Import the Screen interface
 
 public class StartScreen implements Screen {
 
@@ -17,9 +17,9 @@ public class StartScreen implements Screen {
     private Texture exitTexture;
     private Rectangle startButtonBounds;
     private Rectangle exitButtonBounds;
-    private com.mygdx.game.AstroRunSavePlanet game;
+    private AstroRunSavePlanet game;
 
-    public StartScreen(com.mygdx.game.AstroRunSavePlanet game) {
+    public StartScreen(AstroRunSavePlanet game) {
         this.game = game;
         this.camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         this.camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -29,6 +29,7 @@ public class StartScreen implements Screen {
         startTexture = new Texture(Gdx.files.internal("start_button.png"));
         exitTexture = new Texture(Gdx.files.internal("exit_button.png"));
 
+        // Define fixed bounds for the start and exit buttons
         float startButtonWidth = 400;
         float startButtonHeight = 100;
         float exitButtonWidth = 400;
@@ -54,21 +55,24 @@ public class StartScreen implements Screen {
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
 
+        // Draw the start background image
         batch.draw(startBackgroundTexture, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
+        // Draw the start button within the fixed bounds
         batch.draw(startTexture, startButtonBounds.x, startButtonBounds.y, startButtonBounds.width, startButtonBounds.height);
 
+        // Draw the exit button within the fixed bounds
         batch.draw(exitTexture, exitButtonBounds.x, exitButtonBounds.y, exitButtonBounds.width, exitButtonBounds.height);
 
         batch.end();
 
         if (Gdx.input.isTouched()) {
             Vector3 touchPos = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
-            touchPos = camera.unproject(touchPos);
+            touchPos = camera.unproject(touchPos); // Convert touch coordinates to screen coordinates
             if (startButtonBounds.contains(touchPos.x, touchPos.y)) {
-                game.startMainGame();
+                game.startMainGame(); // Transition to the main game screen
             } else if (exitButtonBounds.contains(touchPos.x, touchPos.y)) {
-                Gdx.app.exit();
+                Gdx.app.exit(); // Exit the game
             }
         }
     }
