@@ -17,8 +17,10 @@ public class StartScreen implements Screen {
     private Texture exitTexture;
     private Rectangle startButtonBounds;
     private Rectangle exitButtonBounds;
+    private com.mygdx.game.AstroRunSavePlanet game;
 
-    public StartScreen(AstroRunSavePlanet game) {
+    public StartScreen(com.mygdx.game.AstroRunSavePlanet game) {
+        this.game = game;
         this.camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         this.camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         this.batch = game.getBatch();
@@ -64,7 +66,7 @@ public class StartScreen implements Screen {
             Vector3 touchPos = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
             touchPos = camera.unproject(touchPos);
             if (startButtonBounds.contains(touchPos.x, touchPos.y)) {
-           //     game.startMainGame();
+                game.startMainGame();
             } else if (exitButtonBounds.contains(touchPos.x, touchPos.y)) {
                 Gdx.app.exit();
             }
