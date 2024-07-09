@@ -129,7 +129,9 @@ public class MainGameScreen implements Screen {
         for (Bullet alienBullet : alienBullets) {
             alienBullet.render(batch);
         }
-        planet.render(batch);
+
+        // Pass delta only if the game is not paused
+        planet.render(batch, isPaused ? 0 : delta);
 
         // Draw the appropriate button based on the game state
         if (isPaused) {
@@ -140,8 +142,6 @@ public class MainGameScreen implements Screen {
 
         font.draw(batch, "Bullets: " + remainingBullets, Gdx.graphics.getWidth() - 100, Gdx.graphics.getHeight() - 10);
         batch.end();
-
-        // Handle button clicks
         if (Gdx.input.justTouched()) {
             Vector3 touchPos = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
             camera.unproject(touchPos);
