@@ -14,12 +14,12 @@ public class AstroRunSavePlanet extends Game {
 		batch = new SpriteBatch();
 		startScreen = new StartScreen(this);
 		mainGameScreen = new MainGameScreen(this);
-		setScreen(startScreen); // Set the initial screen to the start screen
+		setScreen(startScreen);
 		isPaused = false;
 	}
 
 	public void startMainGame() {
-		setScreen(mainGameScreen); // Transition to the main game screen
+		setScreen(mainGameScreen);
 	}
 
 	public void pauseGame() {

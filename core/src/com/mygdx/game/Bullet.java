@@ -2,6 +2,7 @@ package com.mygdx.game;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 
@@ -11,10 +12,12 @@ public class Bullet {
     private float speed;
     private Texture texture;
     private boolean active;
+
     private static final float SCALE = 0.2f;
 
     public Bullet(float x, float y, float directionX, float directionY, float speed, Texture texture) {
         position = new Vector2(x, y);
+
         direction = new Vector2(directionX, directionY).nor();
         this.speed = speed;
         this.texture = texture;

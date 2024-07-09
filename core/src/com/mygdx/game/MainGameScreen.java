@@ -11,6 +11,8 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.Screen;
+
+import java.util.ArrayList;
 import java.util.Iterator;
 
 public class MainGameScreen implements Screen {
@@ -26,12 +28,9 @@ public class MainGameScreen implements Screen {
     private Texture resumeButtonTexture;
     private Astronaut astronaut;
     private Array<Bullet> bullets;
-    private Array<Bullet> alienBullets;
     private Planet planet;
     private int remainingBullets;
     private BitmapFont font;
-    private float shootInterval = 2f; // Interval in seconds
-    private float shootTimer = 0f; // Timer to track shooting
     private boolean isPaused = false;
 
     private Rectangle pauseButtonBounds;
@@ -51,17 +50,16 @@ public class MainGameScreen implements Screen {
         resumeButtonTexture = new Texture(Gdx.files.internal("resume_button.png"));
         astronaut = new Astronaut(100, 300, astronautTexture);
         bullets = new Array<>();
-        alienBullets = new Array<>();
-        planet = new Planet(500, 300, alienPlanetTexture, savedPlanetTexture);
+        planet = new Planet(800, 300, alienPlanetTexture, savedPlanetTexture);
 
-        remainingBullets = 10; // Start with 10 bullets
+        remainingBullets = 10;
         font = new BitmapFont();
 
-        // Define bounds for the pause and resume buttons
+
         float buttonWidth = 100;
         float buttonHeight = 50;
         float buttonX = (Gdx.graphics.getWidth() - buttonWidth) / 2;
-        float buttonY = Gdx.graphics.getHeight() - buttonHeight - 10; // 10 pixels from the top
+        float buttonY = Gdx.graphics.getHeight() - buttonHeight - 10;
 
         pauseButtonBounds = new Rectangle(buttonX, buttonY, buttonWidth, buttonHeight);
         resumeButtonBounds = new Rectangle(buttonX, buttonY, buttonWidth, buttonHeight);
@@ -76,27 +74,17 @@ public class MainGameScreen implements Screen {
             astronaut.handleInput();
             astronaut.update(delta);
 
-            if (Gdx.input.isKeyJustPressed(Keys.ENTER) && remainingBullets > 0) {
+            if (Gdx.input.isKeyJustPressed(Keys.ENTER) && remainingBullets > 0 && !astronaut.isDestroyed()) {
                 float bulletX = astronaut.getPosition().x + astronautTexture.getWidth() * 0.5f;
                 float bulletY = astronaut.getPosition().y + astronautTexture.getHeight() * 0.18f;
                 bullets.add(new Bullet(bulletX, bulletY, 1, 0, 300, bulletTexture));
                 remainingBullets--;
             }
 
-            shootTimer += delta;
-            if (shootTimer >= shootInterval) {
-                Bullet alienBullet = planet.shootAt(astronaut);
-                if (alienBullet != null) {
-                    alienBullets.add(alienBullet);
-                }
-                shootTimer = 0f;
-            }
+            planet.update(delta, astronaut.getPosition());
 
             for (Bullet bullet : bullets) {
                 bullet.update(delta);
-            }
-            for (Bullet alienBullet : alienBullets) {
-                alienBullet.update(delta);
             }
 
             Iterator<Bullet> bulletIterator = bullets.iterator();
@@ -106,15 +94,22 @@ public class MainGameScreen implements Screen {
                     bulletIterator.remove();
                 } else if (planet.isColliding(bullet)) {
                     planet.hit();
+                    //planet.showHitEffect();
                     bulletIterator.remove();
                 }
             }
 
+            ArrayList<Bullet> alienBullets = planet.getAlienBullets();
             Iterator<Bullet> alienBulletIterator = alienBullets.iterator();
             while (alienBulletIterator.hasNext()) {
                 Bullet alienBullet = alienBulletIterator.next();
-                if (!alienBullet.isActive()) {
+                if (!alienBullet.isActive() || alienBullet.getPosition().x < 0 || alienBullet.getPosition().x > Gdx.graphics.getWidth()
+                        || alienBullet.getPosition().y < 0 || alienBullet.getPosition().y > Gdx.graphics.getHeight()) {
                     alienBulletIterator.remove();
+                } else if (astronaut.isColliding(alienBullet)) {
+                    astronaut.moveDownAndOut(delta);
+                    alienBulletIterator.remove();
+                    //isPaused = true;
                 }
             }
         }
@@ -126,14 +121,9 @@ public class MainGameScreen implements Screen {
         for (Bullet bullet : bullets) {
             bullet.render(batch);
         }
-        for (Bullet alienBullet : alienBullets) {
-            alienBullet.render(batch);
-        }
 
-        // Pass delta only if the game is not paused
         planet.render(batch, isPaused ? 0 : delta);
 
-        // Draw the appropriate button based on the game state
         if (isPaused) {
             batch.draw(resumeButtonTexture, resumeButtonBounds.x, resumeButtonBounds.y, resumeButtonBounds.width, resumeButtonBounds.height);
         } else {
@@ -142,6 +132,7 @@ public class MainGameScreen implements Screen {
 
         font.draw(batch, "Bullets: " + remainingBullets, Gdx.graphics.getWidth() - 100, Gdx.graphics.getHeight() - 10);
         batch.end();
+
         if (Gdx.input.justTouched()) {
             Vector3 touchPos = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
             camera.unproject(touchPos);
@@ -186,9 +177,6 @@ public class MainGameScreen implements Screen {
         astronaut.dispose();
         for (Bullet bullet : bullets) {
             bullet.dispose();
-        }
-        for (Bullet alienBullet : alienBullets) {
-            alienBullet.dispose();
         }
         planet.dispose();
         font.dispose();
