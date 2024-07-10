@@ -54,12 +54,12 @@ public class Planet {
         collisionPolygon.setOrigin(width / 2, height / 2); // Set the origin for rotation
         hitEffect = new ParticleEffect();
         try {
-            hitEffect.load(Gdx.files.internal("Particle Park Trail.p"), Gdx.files.internal(""));
+            hitEffect.load(Gdx.files.internal("Particle Park Explosion Small.p"), Gdx.files.internal(""));
         } catch (GdxRuntimeException e) {
             e.printStackTrace();
         }
-
-        hitEffect.scaleEffect(15f);
+        //hitEffect.setPosition(x, y+height);
+        hitEffect.scaleEffect(1f); // Adjust the scale of the particle effect if needed
 
         effectTimer = 0f;
         showEffect = false;
@@ -112,6 +112,7 @@ public class Planet {
                 bullet.render(batch);
         }
         if (showEffect) {
+            //hitEffect.setPosition(position.x, position.y);  // Ensure effect follows the planet
             hitEffect.draw(batch, deltaTime);
         }
     }
@@ -172,11 +173,12 @@ public class Planet {
         };
         collisionPolygon = new Polygon(vertices);
         collisionPolygon.setPosition(position.x, position.y);
-        collisionPolygon.setOrigin(width / 2, height / 2); // Set the origin for rotation
+        collisionPolygon.setOrigin(width / 2, height / 2);
     }
     public void showHitEffect(float x,float y) {
         showEffect = true;
-        hitEffect.setPosition(x, y);
+        hitEffect.setPosition(x+10, y);
+        //hitEffect.scaleEffect(10f);
         hitEffect.start();
         effectTimer = 0f;
     }

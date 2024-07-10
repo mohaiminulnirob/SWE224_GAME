@@ -40,12 +40,12 @@ public class Astronaut {
         collisionPolygon.setPosition(x, y);
         hitEffect = new ParticleEffect();
         try {
-            hitEffect.load(Gdx.files.internal("Particle Park Trail.p"), Gdx.files.internal(""));
+            hitEffect.load(Gdx.files.internal("Particle Park Thrust.p"), Gdx.files.internal(""));
         } catch (GdxRuntimeException e) {
             e.printStackTrace();
         }
         //hitEffect.setPosition(x, y);
-        hitEffect.scaleEffect(15f);
+        hitEffect.scaleEffect(1f);
 
         effectTimer = 0f;
         showEffect = false;
@@ -104,7 +104,7 @@ public class Astronaut {
     }
     public void showHitEffect(float x,float y) {
         //showEffect = true;
-        hitEffect.setPosition(x, y);
+        hitEffect.setPosition(x+20, y);
         //hitEffect.scaleEffect(10f);
         hitEffect.start();
         //effectTimer = 0f;
