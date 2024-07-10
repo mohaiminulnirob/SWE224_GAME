@@ -30,6 +30,8 @@ public class Planet {
     private static final float ALIEN_SCALE = 1.5f;
     private static final float SAVED_SCALE = .8f;
 
+    private static final float PLANET_SPEED = 100;
+
     public Planet(float x, float y, Texture alienTexture, Texture savedTexture) {
         position = new Vector2(x, y);
         this.alienTexture = alienTexture;
@@ -51,15 +53,14 @@ public class Planet {
         };
         collisionPolygon = new Polygon(vertices);
         collisionPolygon.setPosition(x, y);
-        collisionPolygon.setOrigin(width / 2, height / 2); // Set the origin for rotation
+        collisionPolygon.setOrigin(width / 2, height / 2);
         hitEffect = new ParticleEffect();
         try {
             hitEffect.load(Gdx.files.internal("Particle Park Explosion Small.p"), Gdx.files.internal(""));
         } catch (GdxRuntimeException e) {
             e.printStackTrace();
         }
-        //hitEffect.setPosition(x, y+height);
-        hitEffect.scaleEffect(1f); // Adjust the scale of the particle effect if needed
+        hitEffect.scaleEffect(1f);
 
         effectTimer = 0f;
         showEffect = false;
@@ -112,7 +113,6 @@ public class Planet {
                 bullet.render(batch);
         }
         if (showEffect) {
-            //hitEffect.setPosition(position.x, position.y);  // Ensure effect follows the planet
             hitEffect.draw(batch, deltaTime);
         }
     }
@@ -137,9 +137,16 @@ public class Planet {
             effectTimer += delta;
             if (effectTimer >= 1.0f) {
                 hitEffect.reset();
-                hitEffect.scaleEffect(10f);
+                hitEffect.scaleEffect(1f);
                 showEffect = false;
             }
+        }
+
+        position.x -= PLANET_SPEED * delta;
+        collisionPolygon.setPosition(position.x, position.y);
+
+        if (position.x + alienTexture.getWidth() * ALIEN_SCALE < 0) {
+            resetPosition();
         }
     }
 
@@ -152,7 +159,7 @@ public class Planet {
         directionX /= length;
         directionY /= length;
         Bullet alienBullet = new Bullet(bulletX, bulletY, directionX, directionY, 300, new Texture("alien_bullet.png"));
-        if(astronautPosition.y>=0)
+        if(astronautPosition.y >= 0)
             alienBullets.add(alienBullet);
     }
 
@@ -173,12 +180,38 @@ public class Planet {
         };
         collisionPolygon = new Polygon(vertices);
         collisionPolygon.setPosition(position.x, position.y);
+        collisionPolygon.setOrigin(width / 2, height / 2); // Set the origin for rotation
+    }
+
+    private void resetPosition() {
+        position.x = Gdx.graphics.getWidth();
+        position.y = (float) Math.random() * (Gdx.graphics.getHeight() - alienTexture.getHeight() * ALIEN_SCALE);
+        collisionPolygon.setPosition(position.x, position.y);
+
+        if (isSaved) {
+            convertToAlien();
+        }
+    }
+
+    public void convertToAlien() {
+        isSaved = false;
+        hitCount = 0;
+        float width = alienTexture.getWidth() * ALIEN_SCALE;
+        float height = alienTexture.getHeight() * ALIEN_SCALE;
+        float[] vertices = {
+                0, 0,
+                width, 0,
+                width, height,
+                0, height
+        };
+        collisionPolygon = new Polygon(vertices);
+        collisionPolygon.setPosition(position.x, position.y);
         collisionPolygon.setOrigin(width / 2, height / 2);
     }
-    public void showHitEffect(float x,float y) {
+
+    public void showHitEffect(float x, float y) {
         showEffect = true;
         hitEffect.setPosition(x+10, y);
-        //hitEffect.scaleEffect(10f);
         hitEffect.start();
         effectTimer = 0f;
     }

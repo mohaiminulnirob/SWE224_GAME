@@ -36,6 +36,8 @@ public class MainGameScreen implements Screen {
     private Rectangle pauseButtonBounds;
     private Rectangle resumeButtonBounds;
 
+    private float backgroundX;
+
     public MainGameScreen(AstroRunSavePlanet game) {
         camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -50,11 +52,10 @@ public class MainGameScreen implements Screen {
         resumeButtonTexture = new Texture(Gdx.files.internal("resume_button.png"));
         astronaut = new Astronaut(100, 300, astronautTexture);
         bullets = new Array<>();
-        planet = new Planet(800, 300, alienPlanetTexture, savedPlanetTexture);
+        planet = new Planet(1000, 300, alienPlanetTexture, savedPlanetTexture);
 
         remainingBullets = 10;
         font = new BitmapFont();
-
 
         float buttonWidth = 100;
         float buttonHeight = 50;
@@ -63,6 +64,8 @@ public class MainGameScreen implements Screen {
 
         pauseButtonBounds = new Rectangle(buttonX, buttonY, buttonWidth, buttonHeight);
         resumeButtonBounds = new Rectangle(buttonX, buttonY, buttonWidth, buttonHeight);
+
+        backgroundX = 0;
     }
 
     @Override
@@ -112,11 +115,18 @@ public class MainGameScreen implements Screen {
                     //isPaused = true;
                 }
             }
+
+            backgroundX -= 200 * delta;
+            if (backgroundX <= -Gdx.graphics.getWidth()) {
+                backgroundX += Gdx.graphics.getWidth();
+            }
         }
 
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
-        batch.draw(background, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        batch.draw(background, backgroundX, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        batch.draw(background, backgroundX + Gdx.graphics.getWidth(), 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+
         astronaut.render(batch);
         for (Bullet bullet : bullets) {
             bullet.render(batch);
