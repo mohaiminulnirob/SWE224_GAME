@@ -7,7 +7,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.GdxRuntimeException;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -30,7 +29,7 @@ public class Planet {
     private static final float ALIEN_SCALE = 1.5f;
     private static final float SAVED_SCALE = .8f;
 
-    private static final float PLANET_SPEED = 100;
+    private static final float PLANET_SPEED = 100; // Speed of the planet
 
     public Planet(float x, float y, Texture alienTexture, Texture savedTexture) {
         position = new Vector2(x, y);
@@ -70,13 +69,14 @@ public class Planet {
         if (!isSaved) {
             hitCount++;
             if (hitCount >= 5) {
+                MainGameScreen.UpdateRemBullets();
                 convertToSaved();
             }
         }
     }
 
     public boolean isColliding(Bullet bullet) {
-        if(collisionPolygon.contains(bullet.getPosition().x + bullet.getWidth()/2, bullet.getPosition().y + bullet.getHeight() / 2))
+        if(collisionPolygon.contains(bullet.getPosition().x + bullet.getWidth()/2, bullet.getPosition().y + bullet.getHeight() / 2) && !isSaved)
             showHitEffect(bullet.getPosition().x + bullet.getWidth()/2,bullet.getPosition().y + bullet.getHeight() / 2);
         return collisionPolygon.contains(bullet.getPosition().x + bullet.getWidth()/2, bullet.getPosition().y + bullet.getHeight() / 2);
     }
@@ -180,7 +180,7 @@ public class Planet {
         };
         collisionPolygon = new Polygon(vertices);
         collisionPolygon.setPosition(position.x, position.y);
-        collisionPolygon.setOrigin(width / 2, height / 2); // Set the origin for rotation
+        collisionPolygon.setOrigin(width / 2, height / 2);
     }
 
     private void resetPosition() {
