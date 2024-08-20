@@ -7,7 +7,9 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.GdxRuntimeException;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 
 public class Astronaut {
     private Vector2 position;
@@ -16,16 +18,21 @@ public class Astronaut {
     private boolean isDestroyed = false;
     private Polygon collisionPolygon;
     private ParticleEffect hitEffect;
-
+    private int AstronautHealth, AstronautHealthInit;
+    private boolean AstronautCollison;
     private float effectTimer;
-    private boolean showEffect;
+    private float destroyTimer;
     private static final float SPEED = 150f;
     private static final float SCALE = 0.5f;
+    private ShapeRenderer HealthRenderer;
+    private BitmapFont HealthText;
 
     public Astronaut(float x, float y, Texture texture) {
         position = new Vector2(x, y);
         this.texture = texture;
 
+        HealthRenderer = new ShapeRenderer();
+        HealthText = new BitmapFont();
         float[] vertices = {
                 10 * SCALE, 0,
                 (texture.getWidth() - 10) * SCALE, 0,
@@ -38,31 +45,47 @@ public class Astronaut {
         };
         collisionPolygon = new Polygon(vertices);
         collisionPolygon.setPosition(x, y);
+
         hitEffect = new ParticleEffect();
         try {
             hitEffect.load(Gdx.files.internal("Particle Park Thrust.p"), Gdx.files.internal(""));
         } catch (GdxRuntimeException e) {
             e.printStackTrace();
         }
-        //hitEffect.setPosition(x, y);
-        hitEffect.scaleEffect(1f);
-
+        hitEffect.scaleEffect(3f);
         effectTimer = 0f;
-        showEffect = false;
+        destroyTimer = 0f;
+        AstronautHealth = 5;
+        AstronautHealthInit = AstronautHealth;
+        AstronautCollison = false;
+    }
+
+    public void Collision() {
+        AstronautHealth--;
+        if (AstronautHealth == 0) {
+            moveOutOfScreen = true;
+            AstronautCollison = false;
+        } else {
+            AstronautCollison = true;
+        }
     }
 
     public void update(float delta) {
         if (moveOutOfScreen) {
-            if(effectTimer<0.5f)
-                showHitEffect(position.x, position.y);
+            if (destroyTimer < 0.5f)
+                showHitEffect(position.x + 30, position.y + 30);
             hitEffect.update(delta);
 
-            effectTimer+=delta;
+            destroyTimer += delta;
             position.y -= 200 * delta;
             if (position.y + texture.getHeight() < 0) {
                 isDestroyed = true;
-                //texture.dispose();
             }
+        } else if (AstronautCollison) {
+            if (effectTimer < 0.5f)
+                showHitEffect(position.x + 30, position.y + 30);
+            hitEffect.update(delta);
+            effectTimer += delta;
         }
 
         if (position.x < 0 && !moveOutOfScreen) {
@@ -75,14 +98,14 @@ public class Astronaut {
         } else if (position.y > Gdx.graphics.getHeight() - texture.getHeight() * SCALE) {
             position.y = Gdx.graphics.getHeight() - texture.getHeight() * SCALE;
         }
+
         collisionPolygon.setPosition(position.x, position.y);
     }
 
     public void handleInput() {
-        if(moveOutOfScreen)
-            return;
+        if (moveOutOfScreen) return;
 
-        if (Gdx.input.isKeyPressed(Keys.LEFT) ) {
+        if (Gdx.input.isKeyPressed(Keys.LEFT)) {
             position.x -= SPEED * Gdx.graphics.getDeltaTime();
         }
         if (Gdx.input.isKeyPressed(Keys.RIGHT)) {
@@ -94,32 +117,67 @@ public class Astronaut {
         if (Gdx.input.isKeyPressed(Keys.DOWN)) {
             position.y -= SPEED * Gdx.graphics.getDeltaTime();
         }
+
         collisionPolygon.setPosition(position.x, position.y);
     }
+
     public boolean isColliding(Bullet bullet) {
         return collisionPolygon.contains(bullet.getPosition().x + bullet.getWidth(), bullet.getPosition().y + bullet.getHeight() / 2);
     }
-    public void moveDownAndOut(float deltaTime) {
-        moveOutOfScreen = true;
-    }
-    public void showHitEffect(float x,float y) {
-        //showEffect = true;
-        hitEffect.setPosition(x+20, y);
-        //hitEffect.scaleEffect(10f);
+
+    public void showHitEffect(float x, float y) {
+        hitEffect.setPosition(x, y);
         hitEffect.start();
-        //effectTimer = 0f;
     }
 
     public void render(SpriteBatch batch) {
-        if(moveOutOfScreen && effectTimer<1.0f)
+        if (moveOutOfScreen && destroyTimer < 1.0f) {
+            AstronautCollison = false;
+            effectTimer = 0f;
             hitEffect.draw(batch);
-        if(!isDestroyed)
+        } else if (AstronautCollison && effectTimer < 1.0f) {
+            hitEffect.draw(batch);
+        } else {
+            hitEffect.reset();
+            AstronautCollison = false;
+            effectTimer = 0f;
+        }
+
+        if (!isDestroyed) {
             batch.draw(texture, position.x, position.y, texture.getWidth() * SCALE, texture.getHeight() * SCALE);
+        }
+
+        HealthText.getData().setScale(2.0f);
+        HealthText.draw(batch, "Health:", 40, Gdx.graphics.getHeight() - 17);
+
+
+        batch.end();
+
+        HealthRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        float barX = 150;
+        float barY = Gdx.graphics.getHeight() - 40;
+        float barWidth = 200;
+        float barHeight = 20;
+
+        float healthPercentage = (float) AstronautHealth / AstronautHealthInit;
+
+        HealthRenderer.setColor(0.5f, 0.5f, 0.5f, 1);
+        HealthRenderer.rect(barX, barY, barWidth, barHeight);
+
+        HealthRenderer.setColor(0, 1, 0, 1);
+        HealthRenderer.rect(barX, barY, barWidth * healthPercentage, barHeight);
+
+        HealthRenderer.end();
+        batch.begin();
     }
 
     public void dispose() {
         texture.dispose();
+        hitEffect.dispose();
+        HealthRenderer.dispose();
+        HealthText.dispose();
     }
+
     public boolean isDestroyed() {
         return isDestroyed;
     }

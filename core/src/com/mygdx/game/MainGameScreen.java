@@ -11,7 +11,6 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.Screen;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -29,8 +28,8 @@ public class MainGameScreen implements Screen {
     private Astronaut astronaut;
     private Array<Bullet> bullets;
     private Planet planet;
-    private int remainingBullets;
-    private BitmapFont font;
+    private static int remainingBullets;
+    private BitmapFont BulletText;
     private boolean isPaused = false;
 
     private Rectangle pauseButtonBounds;
@@ -52,10 +51,10 @@ public class MainGameScreen implements Screen {
         resumeButtonTexture = new Texture(Gdx.files.internal("resume_button.png"));
         astronaut = new Astronaut(100, 300, astronautTexture);
         bullets = new Array<>();
-        planet = new Planet(1000, 300, alienPlanetTexture, savedPlanetTexture);
+        planet = new Planet(800, 300, alienPlanetTexture, savedPlanetTexture);
 
         remainingBullets = 10;
-        font = new BitmapFont();
+        BulletText = new BitmapFont();
 
         float buttonWidth = 100;
         float buttonHeight = 50;
@@ -97,7 +96,6 @@ public class MainGameScreen implements Screen {
                     bulletIterator.remove();
                 } else if (planet.isColliding(bullet)) {
                     planet.hit();
-                    //planet.showHitEffect();
                     bulletIterator.remove();
                 }
             }
@@ -110,12 +108,11 @@ public class MainGameScreen implements Screen {
                         || alienBullet.getPosition().y < 0 || alienBullet.getPosition().y > Gdx.graphics.getHeight()) {
                     alienBulletIterator.remove();
                 } else if (astronaut.isColliding(alienBullet)) {
-                    astronaut.moveDownAndOut(delta);
+
+                    astronaut.Collision();
                     alienBulletIterator.remove();
-                    //isPaused = true;
                 }
             }
-
             backgroundX -= 200 * delta;
             if (backgroundX <= -Gdx.graphics.getWidth()) {
                 backgroundX += Gdx.graphics.getWidth();
@@ -139,8 +136,8 @@ public class MainGameScreen implements Screen {
         } else {
             batch.draw(pauseButtonTexture, pauseButtonBounds.x, pauseButtonBounds.y, pauseButtonBounds.width, pauseButtonBounds.height);
         }
-
-        font.draw(batch, "Bullets: " + remainingBullets, Gdx.graphics.getWidth() - 100, Gdx.graphics.getHeight() - 10);
+        BulletText.getData().setScale(2.0f);
+        BulletText.draw(batch, "Bullets: " + remainingBullets, Gdx.graphics.getWidth() - 200, Gdx.graphics.getHeight() - 17);
         batch.end();
 
         if (Gdx.input.justTouched()) {
@@ -153,6 +150,10 @@ public class MainGameScreen implements Screen {
             }
         }
     }
+    public static void UpdateRemBullets(){
+        remainingBullets+=10;
+    }
+
 
     @Override
     public void resize(int width, int height) {
@@ -189,6 +190,6 @@ public class MainGameScreen implements Screen {
             bullet.dispose();
         }
         planet.dispose();
-        font.dispose();
+        BulletText.dispose();
     }
 }
