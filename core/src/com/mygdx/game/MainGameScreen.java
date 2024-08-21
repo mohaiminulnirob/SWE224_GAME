@@ -1,12 +1,14 @@
 package com.mygdx.game;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
@@ -15,7 +17,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 public class MainGameScreen implements Screen {
-
     private OrthographicCamera camera;
     private SpriteBatch batch;
     private Texture background;
@@ -29,12 +30,12 @@ public class MainGameScreen implements Screen {
     private Array<Bullet> bullets;
     private Planet planet;
     private static int remainingBullets;
+    private static int score;
     private BitmapFont BulletText;
+    private BitmapFont scoreText;
     private boolean isPaused = false;
-
     private Rectangle pauseButtonBounds;
     private Rectangle resumeButtonBounds;
-
     private float backgroundX;
 
     public MainGameScreen(AstroRunSavePlanet game) {
@@ -54,7 +55,15 @@ public class MainGameScreen implements Screen {
         planet = new Planet(800, 300, alienPlanetTexture, savedPlanetTexture);
 
         remainingBullets = 10;
+        score = 0;
         BulletText = new BitmapFont();
+
+        FreeTypeFontGenerator titleGenerator = new FreeTypeFontGenerator(Gdx.files.internal("Zebulon.otf"));
+        FreeTypeFontGenerator.FreeTypeFontParameter titleParameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        titleParameter.size = 22;
+        titleParameter.color = Color.WHITE;
+        scoreText = titleGenerator.generateFont(titleParameter);
+        titleGenerator.dispose();
 
         float buttonWidth = 100;
         float buttonHeight = 50;
@@ -136,8 +145,13 @@ public class MainGameScreen implements Screen {
         } else {
             batch.draw(pauseButtonTexture, pauseButtonBounds.x, pauseButtonBounds.y, pauseButtonBounds.width, pauseButtonBounds.height);
         }
-        BulletText.getData().setScale(2.0f);
-        BulletText.draw(batch, "Bullets: " + remainingBullets, Gdx.graphics.getWidth() - 200, Gdx.graphics.getHeight() - 17);
+        scoreText.setColor(Color.GREEN);
+        scoreText.draw(batch, "Score: " + score,Gdx.graphics.getWidth() - 380 , Gdx.graphics.getHeight() - 17);
+        scoreText.setColor(Color.MAGENTA);
+        scoreText.draw(batch, "Bullets: " + remainingBullets, Gdx.graphics.getWidth() - 190, Gdx.graphics.getHeight() - 17);
+
+//        BulletText.getData().setScale(2.0f);
+//        BulletText.draw(batch, "Bullets: " + remainingBullets, Gdx.graphics.getWidth() - 170, Gdx.graphics.getHeight() - 17);
         batch.end();
 
         if (Gdx.input.justTouched()) {
@@ -150,8 +164,9 @@ public class MainGameScreen implements Screen {
             }
         }
     }
-    public static void UpdateRemBullets(){
+    public static void UpdateRemBulletsScore(){
         remainingBullets+=10;
+        score+=10;
     }
 
 

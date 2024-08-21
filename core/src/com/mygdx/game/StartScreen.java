@@ -12,7 +12,6 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.Screen;
 
 public class StartScreen implements Screen {
-
     private OrthographicCamera camera;
     private SpriteBatch batch;
     private Texture startBackgroundTexture;

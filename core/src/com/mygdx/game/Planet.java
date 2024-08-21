@@ -22,14 +22,13 @@ public class Planet {
     private float shootInterval;
     private float rotationAngle;
     private ParticleEffect hitEffect;
-
     private float effectTimer;
     private boolean showEffect;
-
     private static final float ALIEN_SCALE = 1.5f;
     private static final float SAVED_SCALE = .8f;
 
-    private static final float PLANET_SPEED = 100; // Speed of the planet
+    private static final float PLANET_SPEED = 100;
+
 
     public Planet(float x, float y, Texture alienTexture, Texture savedTexture) {
         position = new Vector2(x, y);
@@ -69,7 +68,7 @@ public class Planet {
         if (!isSaved) {
             hitCount++;
             if (hitCount >= 5) {
-                MainGameScreen.UpdateRemBullets();
+                MainGameScreen.UpdateRemBulletsScore();
                 convertToSaved();
             }
         }
@@ -185,7 +184,7 @@ public class Planet {
 
     private void resetPosition() {
         position.x = Gdx.graphics.getWidth();
-        position.y = (float) Math.random() * (Gdx.graphics.getHeight() - alienTexture.getHeight() * ALIEN_SCALE);
+        position.y = (float) Math.random() * (Gdx.graphics.getHeight() * 0.8f - alienTexture.getHeight() * ALIEN_SCALE);
         collisionPolygon.setPosition(position.x, position.y);
 
         if (isSaved) {

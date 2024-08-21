@@ -1,8 +1,10 @@
 package com.mygdx.game;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.ParticleEffect;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.math.Polygon;
@@ -55,9 +57,16 @@ public class Astronaut {
         hitEffect.scaleEffect(3f);
         effectTimer = 0f;
         destroyTimer = 0f;
-        AstronautHealth = 5;
+        AstronautHealth = 3;
         AstronautHealthInit = AstronautHealth;
         AstronautCollison = false;
+
+        FreeTypeFontGenerator titleGenerator = new FreeTypeFontGenerator(Gdx.files.internal("Zebulon.otf"));
+        FreeTypeFontGenerator.FreeTypeFontParameter titleParameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        titleParameter.size = 20;
+        titleParameter.color = Color.WHITE;
+        HealthText = titleGenerator.generateFont(titleParameter);
+        titleGenerator.dispose();
     }
 
     public void Collision() {
@@ -147,19 +156,21 @@ public class Astronaut {
             batch.draw(texture, position.x, position.y, texture.getWidth() * SCALE, texture.getHeight() * SCALE);
         }
 
-        HealthText.getData().setScale(2.0f);
-        HealthText.draw(batch, "Health:", 40, Gdx.graphics.getHeight() - 17);
+        //HealthText.getData().setScale(2.0f);
+        HealthText.draw(batch, "Health:", 35, Gdx.graphics.getHeight() - 17);
 
 
         batch.end();
 
         HealthRenderer.begin(ShapeRenderer.ShapeType.Filled);
         float barX = 150;
-        float barY = Gdx.graphics.getHeight() - 40;
+        float barY = Gdx.graphics.getHeight() - 35;
         float barWidth = 200;
         float barHeight = 20;
 
         float healthPercentage = (float) AstronautHealth / AstronautHealthInit;
+        if(moveOutOfScreen)
+            healthPercentage=0f;
 
         HealthRenderer.setColor(0.5f, 0.5f, 0.5f, 1);
         HealthRenderer.rect(barX, barY, barWidth, barHeight);
