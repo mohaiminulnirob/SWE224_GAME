@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.math.Polygon;
@@ -57,7 +58,7 @@ public class Astronaut {
         hitEffect.scaleEffect(3f);
         effectTimer = 0f;
         destroyTimer = 0f;
-        AstronautHealth = 3;
+        AstronautHealth = 10;
         AstronautHealthInit = AstronautHealth;
         AstronautCollison = false;
 
@@ -133,6 +134,13 @@ public class Astronaut {
     public boolean isColliding(Bullet bullet) {
         return collisionPolygon.contains(bullet.getPosition().x + bullet.getWidth(), bullet.getPosition().y + bullet.getHeight() / 2);
     }
+    public boolean isCollidingWithRock(Rock rock) {
+        return Intersector.overlaps(rock.getCollisionCircle(), collisionPolygon.getBoundingRectangle());
+    }
+    public boolean isCollidingWithPlanet(Planet planet) {
+        return Intersector.overlapConvexPolygons(this.getCollisionPolygon(), planet.getCollisionPolygon());
+    }
+
 
     public void showHitEffect(float x, float y) {
         hitEffect.setPosition(x, y);
@@ -155,8 +163,6 @@ public class Astronaut {
         if (!isDestroyed) {
             batch.draw(texture, position.x, position.y, texture.getWidth() * SCALE, texture.getHeight() * SCALE);
         }
-
-        //HealthText.getData().setScale(2.0f);
         HealthText.draw(batch, "Health:", 35, Gdx.graphics.getHeight() - 17);
 
 
@@ -180,6 +186,10 @@ public class Astronaut {
 
         HealthRenderer.end();
         batch.begin();
+    }
+
+    public Polygon getCollisionPolygon() {
+        return collisionPolygon;
     }
 
     public void dispose() {

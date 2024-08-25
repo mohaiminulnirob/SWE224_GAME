@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.Screen;
@@ -29,6 +30,7 @@ public class MainGameScreen implements Screen {
     private Astronaut astronaut;
     private Array<Bullet> bullets;
     private Planet planet;
+    private Array<Rock> rocks;
     private static int remainingBullets;
     private static int score;
     private BitmapFont BulletText;
@@ -53,7 +55,10 @@ public class MainGameScreen implements Screen {
         astronaut = new Astronaut(100, 300, astronautTexture);
         bullets = new Array<>();
         planet = new Planet(800, 300, alienPlanetTexture, savedPlanetTexture);
-
+        rocks = new Array<>();
+        for (int i = 0; i < 3; i++) {
+            rocks.add(new Rock());
+        }
         remainingBullets = 10;
         score = 0;
         BulletText = new BitmapFont();
@@ -92,7 +97,7 @@ public class MainGameScreen implements Screen {
                 remainingBullets--;
             }
 
-            planet.update(delta, astronaut.getPosition());
+            planet.update(delta, astronaut.getPosition(),rocks);
 
             for (Bullet bullet : bullets) {
                 bullet.update(delta);
@@ -106,6 +111,15 @@ public class MainGameScreen implements Screen {
                 } else if (planet.isColliding(bullet)) {
                     planet.hit();
                     bulletIterator.remove();
+                } else {
+                    for (Rock rock : rocks) {
+                        if (rock.isColliding(bullet)) {
+                            Vector2 position = bullet.getPosition();
+                            rock.showHitEffect(position.x,position.y);
+
+                            bulletIterator.remove();
+                        }
+                    }
                 }
             }
 
@@ -121,6 +135,28 @@ public class MainGameScreen implements Screen {
                     astronaut.Collision();
                     alienBulletIterator.remove();
                 }
+                else{
+                    for(Rock rock: rocks){
+                        if(rock.isColliding(alienBullet)) {
+
+                            Vector2 position = alienBullet.getPosition();
+                            rock.showHitEffect(position.x,position.y);
+                            alienBulletIterator.remove();
+                        }
+
+                    }
+                }
+            }
+            for( Rock rock:rocks){
+                if(astronaut.isCollidingWithRock(rock) && rock.effectiveness()) {
+                    rock.MakeInactive();
+                    astronaut.Collision();
+                }
+
+            }
+            if(astronaut.isCollidingWithPlanet(planet) && planet.effectiveness()){
+                planet.MakeInactive();
+                astronaut.Collision();
             }
             backgroundX -= 200 * delta;
             if (backgroundX <= -Gdx.graphics.getWidth()) {
@@ -132,14 +168,18 @@ public class MainGameScreen implements Screen {
         batch.begin();
         batch.draw(background, backgroundX, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         batch.draw(background, backgroundX + Gdx.graphics.getWidth(), 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-
         astronaut.render(batch);
+       for (Rock rock : rocks) {
+            rock.update(isPaused ? 0 : delta,
+                    planet.getPosition());
+            rock.render(batch,isPaused ? 0 : delta);
+        }
+
         for (Bullet bullet : bullets) {
             bullet.render(batch);
         }
 
         planet.render(batch, isPaused ? 0 : delta);
-
         if (isPaused) {
             batch.draw(resumeButtonTexture, resumeButtonBounds.x, resumeButtonBounds.y, resumeButtonBounds.width, resumeButtonBounds.height);
         } else {
@@ -150,8 +190,6 @@ public class MainGameScreen implements Screen {
         scoreText.setColor(Color.MAGENTA);
         scoreText.draw(batch, "Bullets: " + remainingBullets, Gdx.graphics.getWidth() - 190, Gdx.graphics.getHeight() - 17);
 
-//        BulletText.getData().setScale(2.0f);
-//        BulletText.draw(batch, "Bullets: " + remainingBullets, Gdx.graphics.getWidth() - 170, Gdx.graphics.getHeight() - 17);
         batch.end();
 
         if (Gdx.input.justTouched()) {
@@ -168,7 +206,6 @@ public class MainGameScreen implements Screen {
         remainingBullets+=10;
         score+=10;
     }
-
 
     @Override
     public void resize(int width, int height) {
@@ -205,6 +242,9 @@ public class MainGameScreen implements Screen {
             bullet.dispose();
         }
         planet.dispose();
+        for (Rock rock : rocks) {
+            rock.dispose();
+        }
         BulletText.dispose();
     }
 }
