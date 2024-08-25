@@ -17,7 +17,6 @@ public class Bullet {
 
     public Bullet(float x, float y, float directionX, float directionY, float speed, Texture texture) {
         position = new Vector2(x, y);
-
         direction = new Vector2(directionX, directionY).nor();
         this.speed = speed;
         this.texture = texture;

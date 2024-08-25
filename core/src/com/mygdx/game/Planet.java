@@ -4,8 +4,10 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -24,11 +26,11 @@ public class Planet {
     private ParticleEffect hitEffect;
     private float effectTimer;
     private boolean showEffect;
+    private boolean effective;
+    private float  effectiveTimer;
     private static final float ALIEN_SCALE = 1.5f;
     private static final float SAVED_SCALE = .8f;
-
     private static final float PLANET_SPEED = 100;
-
 
     public Planet(float x, float y, Texture alienTexture, Texture savedTexture) {
         position = new Vector2(x, y);
@@ -37,7 +39,7 @@ public class Planet {
         this.isSaved = false;
         this.alienBullets = new ArrayList<>();
         this.shootTimer = 0f;
-        this.shootInterval = 1.0f;
+        this.shootInterval = 1.2f;
         this.hitCount = 0;
         this.rotationAngle = 0;
 
@@ -63,7 +65,6 @@ public class Planet {
         effectTimer = 0f;
         showEffect = false;
     }
-
     public void hit() {
         if (!isSaved) {
             hitCount++;
@@ -115,14 +116,12 @@ public class Planet {
             hitEffect.draw(batch, deltaTime);
         }
     }
-
-    public void update(float delta, Vector2 astronautPosition) {
+    public void update(float delta, Vector2 astronautPosition, Array<Rock>rocks) {
         shootTimer += delta;
         if (shootTimer >= shootInterval && !isSaved) {
             generateAlienBullet(astronautPosition);
             shootTimer = 0f;
         }
-
         Iterator<Bullet> bulletIterator = alienBullets.iterator();
         while (bulletIterator.hasNext()) {
             Bullet bullet = bulletIterator.next();
@@ -136,16 +135,23 @@ public class Planet {
             effectTimer += delta;
             if (effectTimer >= 1.0f) {
                 hitEffect.reset();
-                hitEffect.scaleEffect(1f);
+                //hitEffect.scaleEffect(1f);
                 showEffect = false;
             }
+        }
+        if(effective==false){
+            effectiveTimer+=delta;
+            if (effectiveTimer >= 2.0f) {
+                effective=true;
+            }
+
         }
 
         position.x -= PLANET_SPEED * delta;
         collisionPolygon.setPosition(position.x, position.y);
 
         if (position.x + alienTexture.getWidth() * ALIEN_SCALE < 0) {
-            resetPosition();
+            resetPosition(rocks);
         }
     }
 
@@ -161,14 +167,12 @@ public class Planet {
         if(astronautPosition.y >= 0)
             alienBullets.add(alienBullet);
     }
-
     public ArrayList<Bullet> getAlienBullets() {
         return alienBullets;
     }
 
     public void convertToSaved() {
         isSaved = true;
-
         float width = savedTexture.getWidth() * SAVED_SCALE;
         float height = savedTexture.getHeight() * SAVED_SCALE;
         float[] vertices = {
@@ -182,11 +186,20 @@ public class Planet {
         collisionPolygon.setOrigin(width / 2, height / 2);
     }
 
-    private void resetPosition() {
+    private void resetPosition(Array<Rock>rocks) {
         position.x = Gdx.graphics.getWidth();
-        position.y = (float) Math.random() * (Gdx.graphics.getHeight() * 0.8f - alienTexture.getHeight() * ALIEN_SCALE);
+        boolean is_valid = false;
+        while (!is_valid) {
+            position.y = MathUtils.random(0, Gdx.graphics.getHeight()* 0.8f - alienTexture.getHeight() * ALIEN_SCALE);
+            boolean is_valid1 = true;
+            for (Rock rock : rocks) {
+                if (position.y >= rock.getY() - 150 && position.y <= rock.getY() + 150)
+                    is_valid1 = false;
+            }
+            if(is_valid1==true)
+                is_valid=true;
+        }
         collisionPolygon.setPosition(position.x, position.y);
-
         if (isSaved) {
             convertToAlien();
         }
@@ -213,6 +226,21 @@ public class Planet {
         hitEffect.setPosition(x+10, y);
         hitEffect.start();
         effectTimer = 0f;
+    }
+    public boolean effectiveness(){
+        return effective;
+    }
+    public void MakeInactive(){
+        effectiveTimer=0f;
+        effective=false;
+    }
+
+    public Vector2 getPosition() {
+        return position;
+    }
+
+    public Polygon getCollisionPolygon() {
+        return collisionPolygon;
     }
 
     public void dispose() {
