@@ -267,5 +267,6 @@ public class MainGameScreen implements Screen {
             rock.dispose();
         }
         BulletText.dispose();
+        healthPack.dispose();
     }
 }

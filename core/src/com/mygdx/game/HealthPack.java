@@ -49,21 +49,17 @@ public class HealthPack {
         this.scale = SCALE_SIZE;
         this.x = Gdx.graphics.getWidth() + 30;
         boolean is_valid = false;
-        int maxRetries = 100;  // Limit the number of retries to avoid endless loop
+        int maxRetries = 100;
         int retries = 0;
-        float safeDistancePlanet = 150;// Distance buffer to avoid collisions
+        float safeDistancePlanet = 150;
         float safeDistanceRock = 80;
 
         while (!is_valid && retries < maxRetries) {
             this.y = MathUtils.random(0, Gdx.graphics.getHeight() - healthPackTexture.getHeight() * scale);
             is_valid = true;
-
-            // Check collision with planet
             if (y >= z - safeDistancePlanet && y <= z + safeDistancePlanet) {
                 is_valid = false;
             }
-
-            // Check collision with rocks
             for (Rock rock : rocks) {
                 if (y >= rock.getY() - safeDistanceRock && y <= rock.getY() + safeDistanceRock) {
                     is_valid = false;
@@ -75,7 +71,6 @@ public class HealthPack {
         }
 
         if (!is_valid) {
-            // If we couldn't find a valid position, just place it somewhere without checking.
             this.y = MathUtils.random(0, Gdx.graphics.getHeight() - healthPackTexture.getHeight() * scale);
         }
 
@@ -126,10 +121,6 @@ public class HealthPack {
             hitEffect.draw(batch, deltaTime);
         }
     }
-
-//    public boolean isColliding(Astronaut astronaut) {
-//        return collisionCircle.overlaps(astronaut.getCollisionCircle());
-//    }
 
     public boolean isColliding(Bullet bullet) {
         return collisionCircle.contains(bullet.getPosition().x + bullet.getWidth() / 2, bullet.getPosition().y + bullet.getHeight() / 2);
