@@ -46,10 +46,10 @@ public class Planet {
         float width = alienTexture.getWidth() * ALIEN_SCALE;
         float height = alienTexture.getHeight() * ALIEN_SCALE;
         float[] vertices = {
-                20, 20,
-                width-20,20,
-                width-20, height-20,
-                20, height-20
+                0, 0,
+                width,0,
+                width, height,
+                0, height
         };
         collisionPolygon = new Polygon(vertices);
         collisionPolygon.setPosition(x, y);
