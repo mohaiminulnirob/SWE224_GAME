@@ -31,6 +31,7 @@ public class MainGameScreen implements Screen {
     private Array<Bullet> bullets;
     private Planet planet;
     private Array<Rock> rocks;
+    private  HealthPack healthPack;
     private static int remainingBullets;
     private static int score;
     private BitmapFont BulletText;
@@ -59,6 +60,7 @@ public class MainGameScreen implements Screen {
         for (int i = 0; i < 3; i++) {
             rocks.add(new Rock());
         }
+        healthPack = new HealthPack();
         remainingBullets = 10;
         score = 0;
         BulletText = new BitmapFont();
@@ -111,7 +113,13 @@ public class MainGameScreen implements Screen {
                 } else if (planet.isColliding(bullet)) {
                     planet.hit();
                     bulletIterator.remove();
-                } else {
+                }else if(healthPack.isColliding(bullet)){
+                    Vector2 position = bullet.getPosition();
+                    healthPack.showHitEffect(position.x,position.y);
+                    healthPack.setPackTimer(7.0f);
+                    bulletIterator.remove();
+                }
+                else {
                     for (Rock rock : rocks) {
                         if (rock.isColliding(bullet)) {
                             Vector2 position = bullet.getPosition();
@@ -135,6 +143,12 @@ public class MainGameScreen implements Screen {
                     astronaut.Collision();
                     alienBulletIterator.remove();
                 }
+                else if(healthPack.isColliding(alienBullet)){
+                    Vector2 position = alienBullet.getPosition();
+                    healthPack.showHitEffect(position.x,position.y);
+                    healthPack.setPackTimer(7.0f);
+                    alienBulletIterator.remove();
+                }
                 else{
                     for(Rock rock: rocks){
                         if(rock.isColliding(alienBullet)) {
@@ -147,6 +161,11 @@ public class MainGameScreen implements Screen {
                     }
                 }
             }
+            if(astronaut.isCollidingWithHealthPack(healthPack)) {
+                healthPack.setPackTimer(7.0f);
+                astronaut.consumeHealthpack();
+            }
+
             for( Rock rock:rocks){
                 if(astronaut.isCollidingWithRock(rock) && rock.effectiveness()) {
                     rock.MakeInactive();
@@ -174,7 +193,9 @@ public class MainGameScreen implements Screen {
                     planet.getPosition());
             rock.render(batch,isPaused ? 0 : delta);
         }
-
+        healthPack.update(isPaused ? 0 : delta,
+                planet.getPosition(),rocks);
+        healthPack.render(batch,isPaused ? 0 : delta);
         for (Bullet bullet : bullets) {
             bullet.render(batch);
         }
@@ -246,5 +267,6 @@ public class MainGameScreen implements Screen {
             rock.dispose();
         }
         BulletText.dispose();
+        healthPack.dispose();
     }
 }

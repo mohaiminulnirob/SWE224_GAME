@@ -13,6 +13,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import static sun.swing.MenuItemLayoutHelper.max;
 
 public class Astronaut {
     private Vector2 position;
@@ -137,6 +138,9 @@ public class Astronaut {
     public boolean isCollidingWithRock(Rock rock) {
         return Intersector.overlaps(rock.getCollisionCircle(), collisionPolygon.getBoundingRectangle());
     }
+    public boolean isCollidingWithHealthPack(HealthPack healthPack) {
+        return Intersector.overlaps(healthPack.getCollisionCircle(), collisionPolygon.getBoundingRectangle());
+    }
     public boolean isCollidingWithPlanet(Planet planet) {
         return Intersector.overlapConvexPolygons(this.getCollisionPolygon(), planet.getCollisionPolygon());
     }
@@ -197,6 +201,10 @@ public class Astronaut {
         hitEffect.dispose();
         HealthRenderer.dispose();
         HealthText.dispose();
+    }
+    public void consumeHealthpack(){
+        int tempHealth= AstronautHealth+1;
+        AstronautHealth= Math.min(AstronautHealthInit,tempHealth);
     }
 
     public boolean isDestroyed() {
