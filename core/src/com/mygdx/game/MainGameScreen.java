@@ -23,8 +23,6 @@ public class MainGameScreen implements Screen {
     private Texture background;
     private Texture astronautTexture;
     private Texture bulletTexture;
-    private Texture alienPlanetTexture;
-    private Texture savedPlanetTexture;
     private Texture pauseButtonTexture;
     private Texture resumeButtonTexture;
     private Astronaut astronaut;
@@ -50,13 +48,13 @@ public class MainGameScreen implements Screen {
         background = new Texture(Gdx.files.internal("space_background.png"));
         astronautTexture = new Texture(Gdx.files.internal("aeroplane.png"));
         bulletTexture = new Texture(Gdx.files.internal("bullet.png"));
-        alienPlanetTexture = new Texture(Gdx.files.internal("alien_planet.png"));
-        savedPlanetTexture = new Texture(Gdx.files.internal("saved_planet.png"));
+        //alienPlanetTexture = new Texture(Gdx.files.internal("alien_planet.png"));
+        //savedPlanetTexture = new Texture(Gdx.files.internal("saved_planet.png"));
         pauseButtonTexture = new Texture(Gdx.files.internal("pause_button.png"));
         resumeButtonTexture = new Texture(Gdx.files.internal("resume_button.png"));
         astronaut = new Astronaut(100, 300, astronautTexture);
         bullets = new Array<>();
-        planet = new Planet(800, 300, alienPlanetTexture, savedPlanetTexture);
+        planet = new Planet();
         rocks = new Array<>();
         for (int i = 0; i < 3; i++) {
             rocks.add(new Rock());
@@ -283,8 +281,6 @@ public class MainGameScreen implements Screen {
         background.dispose();
         astronautTexture.dispose();
         bulletTexture.dispose();
-        alienPlanetTexture.dispose();
-        savedPlanetTexture.dispose();
         astronaut.dispose();
         for (Bullet bullet : bullets) {
             bullet.dispose();
