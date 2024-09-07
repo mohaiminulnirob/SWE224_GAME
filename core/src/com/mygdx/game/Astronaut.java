@@ -13,7 +13,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import static sun.swing.MenuItemLayoutHelper.max;
 
 public class Astronaut {
     private Vector2 position;
@@ -141,6 +140,9 @@ public class Astronaut {
     public boolean isCollidingWithHealthPack(HealthPack healthPack) {
         return Intersector.overlaps(healthPack.getCollisionCircle(), collisionPolygon.getBoundingRectangle());
     }
+    public boolean isCollidingWithCoin(Coin coin) {
+        return Intersector.overlaps(coin.getCollisionCircle(), collisionPolygon.getBoundingRectangle());
+    }
     public boolean isCollidingWithPlanet(Planet planet) {
         return Intersector.overlapConvexPolygons(this.getCollisionPolygon(), planet.getCollisionPolygon());
     }
@@ -205,6 +207,9 @@ public class Astronaut {
     public void consumeHealthpack(){
         int tempHealth= AstronautHealth+1;
         AstronautHealth= Math.min(AstronautHealthInit,tempHealth);
+    }
+    public void consumeCoin(){
+        MainGameScreen.UpdateRemBullets();
     }
 
     public boolean isDestroyed() {

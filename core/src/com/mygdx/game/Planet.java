@@ -69,7 +69,7 @@ public class Planet {
         if (!isSaved) {
             hitCount++;
             if (hitCount >= 5) {
-                MainGameScreen.UpdateRemBulletsScore();
+                MainGameScreen.UpdateScore();
                 convertToSaved();
             }
         }

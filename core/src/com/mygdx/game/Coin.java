@@ -10,8 +10,9 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 
-public class HealthPack {
-    private Texture healthPackTexture;
+public class Coin {
+    private Texture[] coinTextures;
+    private Texture currentTexture;
     private float x, y;
     private float speed;
     private float scale;
@@ -21,17 +22,23 @@ public class HealthPack {
     private boolean showEffect;
     private boolean effective;
     private float effectiveTimer;
-    private static final float SCALE_SIZE = 1f;
-    private static final float PACKSHOW_INTERVAL = 7.0f;
-    private  static final float PACKHIDE_INTERVAL=30.0f;
-    private float packTimer;
+    private static final float SCALE_SIZE = .8f;
+    private static final float COIN_SHOW_INTERVAL = 28.0f;
+    private static final float COIN_HIDE_INTERVAL = 7.0f;
+    private float coinTimer;
 
-    public HealthPack() {
-        this.healthPackTexture = new Texture(Gdx.files.internal("Health_booster.png"));
+    public Coin() {
+        coinTextures = new Texture[] {
+                new Texture(Gdx.files.internal("coins/coin1.png")),
+                new Texture(Gdx.files.internal("coins/coin2.png")),
+                new Texture(Gdx.files.internal("coins/coin3.png"))
+        };
+        currentTexture = coinTextures[MathUtils.random(coinTextures.length - 1)];
+
         resetPosition(Gdx.graphics.getHeight() / 2, new Array<>());
         this.speed = MathUtils.random(180, 180);
-        this.packTimer = 0f;
-        this.effective = false;
+        this.coinTimer = 0f;
+        this.effective = true;
         this.effectiveTimer = 0f;
 
         hitEffect = new ParticleEffect();
@@ -55,8 +62,10 @@ public class HealthPack {
         float safeDistancePlanet = 150;
         float safeDistanceRock = 80;
 
+        currentTexture = coinTextures[MathUtils.random(coinTextures.length - 1)];
+
         while (!is_valid && retries < maxRetries) {
-            this.y = MathUtils.random(0, Gdx.graphics.getHeight() - healthPackTexture.getHeight() * scale);
+            this.y = MathUtils.random(0, Gdx.graphics.getHeight() - currentTexture.getHeight() * scale);
             is_valid = true;
             if (y >= z - safeDistancePlanet && y <= z + safeDistancePlanet) {
                 is_valid = false;
@@ -72,33 +81,31 @@ public class HealthPack {
         }
 
         if (!is_valid) {
-            this.y = MathUtils.random(0, Gdx.graphics.getHeight() - healthPackTexture.getHeight() * scale);
+            this.y = MathUtils.random(0, Gdx.graphics.getHeight() - currentTexture.getHeight() * scale);
         }
 
-        this.collisionCircle = new Circle(x, y, (healthPackTexture.getWidth() / 2) * scale);
+        this.collisionCircle = new Circle(x, y, (currentTexture.getWidth() / 2) * scale);
     }
 
     public void update(float delta, Vector2 position, Array<Rock> rocks) {
         if(effective == false)
-            effectiveTimer+=delta;
-        if(effectiveTimer>=PACKHIDE_INTERVAL)
-        {
+            effectiveTimer += delta;
+        if(effectiveTimer >= COIN_HIDE_INTERVAL) {
             resetPosition(position.y, rocks);
-            effective=true;
-            effectiveTimer=0.0f;
+            effective = true;
+            effectiveTimer = 0.0f;
         }
-        if(effective==true)
-           packTimer += delta;
-        if (packTimer >= PACKSHOW_INTERVAL) {
-            effective=false;
-            //resetPosition(position.y, rocks);
-            packTimer = 0f;
+        if(effective == true)
+            coinTimer += delta;
+        if (coinTimer >= COIN_SHOW_INTERVAL) {
+            effective = false;
+            coinTimer = 0f;
         }
 
         x -= speed * delta;
-        collisionCircle.setPosition(x + (healthPackTexture.getWidth() / 2) * scale, y + (healthPackTexture.getHeight() / 2) * scale);
+        collisionCircle.setPosition(x + (currentTexture.getWidth() / 2) * scale, y + (currentTexture.getHeight() / 2) * scale);
 
-        if (x + healthPackTexture.getWidth() * scale < 0) {
+        if (x + currentTexture.getWidth() * scale < 0) {
             resetPosition(position.y, rocks);
         }
 
@@ -110,13 +117,6 @@ public class HealthPack {
                 showEffect = false;
             }
         }
-
-//        if (!effective) {
-//            effectiveTimer += delta;
-//            if (effectiveTimer >= 2.0f) {
-//                effective = true;
-//            }
-//        }
     }
 
     public void showHitEffect(float x, float y) {
@@ -127,7 +127,7 @@ public class HealthPack {
     }
 
     public void render(SpriteBatch batch, float deltaTime) {
-        batch.draw(healthPackTexture, x, y, healthPackTexture.getWidth() * scale, healthPackTexture.getHeight() * scale);
+        batch.draw(currentTexture, x, y, currentTexture.getWidth() * scale, currentTexture.getHeight() * scale);
         if (showEffect) {
             hitEffect.draw(batch, deltaTime);
         }
@@ -145,12 +145,14 @@ public class HealthPack {
         return collisionCircle;
     }
 
-    public void setPackTimer(float packTimer) {
-        this.packTimer = packTimer;
+    public void setCoinTimer(float coinTimer) {
+        this.coinTimer = coinTimer;
     }
 
     public void dispose() {
-        healthPackTexture.dispose();
+        for (Texture texture : coinTextures) {
+            texture.dispose();
+        }
         hitEffect.dispose();
     }
 }
