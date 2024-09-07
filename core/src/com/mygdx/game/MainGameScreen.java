@@ -32,6 +32,7 @@ public class MainGameScreen implements Screen {
     private Planet planet;
     private Array<Rock> rocks;
     private  HealthPack healthPack;
+    private Coin coin;
     private static int remainingBullets;
     private static int score;
     private BitmapFont BulletText;
@@ -61,6 +62,7 @@ public class MainGameScreen implements Screen {
             rocks.add(new Rock());
         }
         healthPack = new HealthPack();
+        coin = new Coin();
         remainingBullets = 10;
         score = 0;
         BulletText = new BitmapFont();
@@ -113,10 +115,16 @@ public class MainGameScreen implements Screen {
                 } else if (planet.isColliding(bullet)) {
                     planet.hit();
                     bulletIterator.remove();
-                }else if(healthPack.isColliding(bullet)){
+                }else if(healthPack.isColliding(bullet) && healthPack.isEffective()){
                     Vector2 position = bullet.getPosition();
                     healthPack.showHitEffect(position.x,position.y);
                     healthPack.setPackTimer(7.0f);
+                    bulletIterator.remove();
+                }
+                else if(coin.isColliding(bullet) && coin.isEffective()){
+                    Vector2 position = bullet.getPosition();
+                    coin.showHitEffect(position.x,position.y);
+                    coin.setCoinTimer(7.0f);
                     bulletIterator.remove();
                 }
                 else {
@@ -143,10 +151,16 @@ public class MainGameScreen implements Screen {
                     astronaut.Collision();
                     alienBulletIterator.remove();
                 }
-                else if(healthPack.isColliding(alienBullet)){
+                else if(healthPack.isColliding(alienBullet) && healthPack.isEffective()){
                     Vector2 position = alienBullet.getPosition();
                     healthPack.showHitEffect(position.x,position.y);
                     healthPack.setPackTimer(7.0f);
+                    alienBulletIterator.remove();
+                }
+                else if(coin.isColliding(alienBullet) && coin.isEffective()){
+                    Vector2 position = alienBullet.getPosition();
+                    coin.showHitEffect(position.x,position.y);
+                    coin.setCoinTimer(7.0f);
                     alienBulletIterator.remove();
                 }
                 else{
@@ -161,9 +175,13 @@ public class MainGameScreen implements Screen {
                     }
                 }
             }
-            if(astronaut.isCollidingWithHealthPack(healthPack)) {
+            if(astronaut.isCollidingWithHealthPack(healthPack) && healthPack.isEffective()) {
                 healthPack.setPackTimer(7.0f);
                 astronaut.consumeHealthpack();
+            }
+            if(astronaut.isCollidingWithCoin(coin) && coin.isEffective()) {
+                coin.setCoinTimer(28.0f);
+                astronaut.consumeCoin();
             }
 
             for( Rock rock:rocks){
@@ -195,7 +213,12 @@ public class MainGameScreen implements Screen {
         }
         healthPack.update(isPaused ? 0 : delta,
                 planet.getPosition(),rocks);
-        healthPack.render(batch,isPaused ? 0 : delta);
+        if(healthPack.isEffective())
+            healthPack.render(batch,isPaused ? 0 : delta);
+        coin.update(isPaused ? 0 : delta,
+                planet.getPosition(),rocks);
+        if(coin.isEffective())
+            coin.render(batch,isPaused ? 0 : delta);
         for (Bullet bullet : bullets) {
             bullet.render(batch);
         }
@@ -223,9 +246,13 @@ public class MainGameScreen implements Screen {
             }
         }
     }
-    public static void UpdateRemBulletsScore(){
-        remainingBullets+=10;
+    public static void UpdateScore(){
+        //remainingBullets+=10;
         score+=10;
+    }
+    public static void UpdateRemBullets(){
+        remainingBullets+=10;
+        //score+=10;
     }
 
     @Override
@@ -268,5 +295,6 @@ public class MainGameScreen implements Screen {
         }
         BulletText.dispose();
         healthPack.dispose();
+        coin.dispose();
     }
 }
