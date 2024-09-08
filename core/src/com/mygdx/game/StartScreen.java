@@ -33,9 +33,9 @@ public class StartScreen implements Screen {
         this.camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         this.batch = game.getBatch();
 
-        startBackgroundTexture = new Texture(Gdx.files.internal("start_background.png"));
-        startTexture = new Texture(Gdx.files.internal("start_button.png"));
-        exitTexture = new Texture(Gdx.files.internal("exit_button.png"));
+        startBackgroundTexture = new Texture(Gdx.files.internal("backgrounds/start_background.png"));
+        startTexture = new Texture(Gdx.files.internal("buttons/start_button.png"));
+        exitTexture = new Texture(Gdx.files.internal("buttons/exit_button.png"));
 
         float startButtonWidth = 400;
         float startButtonHeight = 100;
@@ -56,14 +56,14 @@ public class StartScreen implements Screen {
                 exitButtonHeight
         );
 
-        FreeTypeFontGenerator titleGenerator = new FreeTypeFontGenerator(Gdx.files.internal("Zebulon Bold.otf"));
+        FreeTypeFontGenerator titleGenerator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/Zebulon Bold.otf"));
         FreeTypeFontGenerator.FreeTypeFontParameter titleParameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
         titleParameter.size = 60;
         titleParameter.color = Color.WHITE;
         titleFont = titleGenerator.generateFont(titleParameter);
         titleGenerator.dispose();
 
-        FreeTypeFontGenerator textGenerator = new FreeTypeFontGenerator(Gdx.files.internal("Zebulon.otf"));
+        FreeTypeFontGenerator textGenerator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/Zebulon.otf"));
         FreeTypeFontGenerator.FreeTypeFontParameter textParameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
         textParameter.size = 20;
         textParameter.color = Color.WHITE;
@@ -101,7 +101,7 @@ public class StartScreen implements Screen {
             Vector3 touchPos = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
             touchPos = camera.unproject(touchPos);
             if (startButtonBounds.contains(touchPos.x, touchPos.y)) {
-                game.startMainGame();
+                game.setScreen(new MainGameScreen(game));
             } else if (exitButtonBounds.contains(touchPos.x, touchPos.y)) {
                 Gdx.app.exit();
             }

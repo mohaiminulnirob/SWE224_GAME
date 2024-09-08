@@ -36,7 +36,7 @@ public class HealthPack {
 
         hitEffect = new ParticleEffect();
         try {
-            hitEffect.load(Gdx.files.internal("Particle Park Explosion Small.p"), Gdx.files.internal(""));
+            hitEffect.load(Gdx.files.internal("particleEffects/Particle Park Explosion Small.p"), Gdx.files.internal("particleEffects/"));
         } catch (GdxRuntimeException e) {
             e.printStackTrace();
         }
