@@ -51,7 +51,7 @@ public class Astronaut {
 
         hitEffect = new ParticleEffect();
         try {
-            hitEffect.load(Gdx.files.internal("Particle Park Thrust.p"), Gdx.files.internal(""));
+            hitEffect.load(Gdx.files.internal("particleEffects/Particle Park Thrust.p"), Gdx.files.internal("particleEffects/"));
         } catch (GdxRuntimeException e) {
             e.printStackTrace();
         }
@@ -62,7 +62,7 @@ public class Astronaut {
         AstronautHealthInit = AstronautHealth;
         AstronautCollison = false;
 
-        FreeTypeFontGenerator titleGenerator = new FreeTypeFontGenerator(Gdx.files.internal("Zebulon.otf"));
+        FreeTypeFontGenerator titleGenerator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/Zebulon.otf"));
         FreeTypeFontGenerator.FreeTypeFontParameter titleParameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
         titleParameter.size = 20;
         titleParameter.color = Color.WHITE;

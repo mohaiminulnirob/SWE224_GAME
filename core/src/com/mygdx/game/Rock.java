@@ -28,7 +28,7 @@ public class Rock {
         this.speed = MathUtils.random(50,100);
         hitEffect = new ParticleEffect();
         try {
-            hitEffect.load(Gdx.files.internal("Particle Park Explosion Small.p"), Gdx.files.internal(""));
+            hitEffect.load(Gdx.files.internal("particleEffects/Particle Park Explosion Small.p"), Gdx.files.internal("particleEffects/"));
         } catch (GdxRuntimeException e) {
             e.printStackTrace();
         }

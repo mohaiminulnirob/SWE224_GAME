@@ -14,9 +14,9 @@ import java.util.Iterator;
 
 public class Planet {
     private Vector2 position;
-    private Texture[] alienTextures;  // Array of textures for alien planets
+    private Texture[] alienTextures;
     private Texture savedTexture;
-    private Texture currentAlienTexture;  // Currently selected texture
+    private Texture currentAlienTexture;
     private boolean isSaved;
     private Polygon collisionPolygon;
     private int hitCount;
@@ -35,14 +35,11 @@ public class Planet {
 
     public Planet() {
         position = new Vector2(800, 300);
-
-        // Load multiple textures for the alien planet
         this.alienTextures = new Texture[3];
         this.alienTextures[0] = new Texture(Gdx.files.internal("planets/alien_planet1.png"));
         this.alienTextures[1] = new Texture(Gdx.files.internal("planets/alien_planet2.png"));
         this.alienTextures[2] = new Texture(Gdx.files.internal("planets/alien_planet3.png"));
 
-        // Randomly select an alien texture
         this.currentAlienTexture = alienTextures[MathUtils.random(0, 2)];
 
         this.savedTexture = new Texture(Gdx.files.internal("planets/saved_planet.png"));
@@ -67,7 +64,7 @@ public class Planet {
 
         hitEffect = new ParticleEffect();
         try {
-            hitEffect.load(Gdx.files.internal("Particle Park Explosion Small.p"), Gdx.files.internal(""));
+            hitEffect.load(Gdx.files.internal("particleEffects/Particle Park Explosion Small.p"), Gdx.files.internal("particleEffects/"));
         } catch (GdxRuntimeException e) {
             e.printStackTrace();
         }
@@ -101,7 +98,7 @@ public class Planet {
             collisionPolygon.setRotation(rotationAngle);
         }
 
-        Texture texture = isSaved ? savedTexture : currentAlienTexture;  // Use the current alien texture
+        Texture texture = isSaved ? savedTexture : currentAlienTexture;
         float scale = isSaved ? SAVED_SCALE : ALIEN_SCALE;
 
         batch.draw(texture,
@@ -177,7 +174,7 @@ public class Planet {
         float length = (float) Math.sqrt(directionX * directionX + directionY * directionY);
         directionX /= length;
         directionY /= length;
-        Bullet alienBullet = new Bullet(bulletX, bulletY, directionX, directionY, 300, new Texture("alien_bullet.png"));
+        Bullet alienBullet = new Bullet(bulletX, bulletY, directionX, directionY, 300, new Texture("bullets/alien_bullet.png"));
         if (astronautPosition.y >= 0) {
             alienBullets.add(alienBullet);
         }
@@ -218,7 +215,6 @@ public class Planet {
             }
         }
 
-        // Randomly select a new alien texture when resetting the position
         this.currentAlienTexture = alienTextures[MathUtils.random(0, 2)];
 
         float width = currentAlienTexture.getWidth() * ALIEN_SCALE;
@@ -276,7 +272,6 @@ public class Planet {
     }
 
     public void dispose() {
-        // Dispose of all alien textures
         for (Texture texture : alienTextures) {
             texture.dispose();
         }
