@@ -1,4 +1,4 @@
-package com.mygdx.game.Screens;
+package com.mygdx.game;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.Screen;
 import com.mygdx.game.AstroRunSavePlanet;
+import com.mygdx.game.Screens.MainGameScreen;
 
 public class StartScreen implements Screen {
     private OrthographicCamera camera;

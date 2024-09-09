@@ -3,7 +3,6 @@ package com.mygdx.game;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.mygdx.game.Screens.MainGameScreen;
-import com.mygdx.game.Screens.StartScreen;
 
 public class AstroRunSavePlanet extends Game {
 	private StartScreen startScreen;
