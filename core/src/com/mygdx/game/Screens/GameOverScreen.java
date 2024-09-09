@@ -64,7 +64,6 @@ public class GameOverScreen implements Screen {
         batch.draw(exitButtonTexture, exitButtonBounds.x, exitButtonBounds.y, exitButtonBounds.width, exitButtonBounds.height);
         batch.draw(menuButtonTexture, menuButtonBounds.x, menuButtonBounds.y, menuButtonBounds.width, menuButtonBounds.height);
         batch.end();
-
         if (Gdx.input.isTouched()) {
             Vector3 touchPos = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
             touchPos = camera.unproject(touchPos);
