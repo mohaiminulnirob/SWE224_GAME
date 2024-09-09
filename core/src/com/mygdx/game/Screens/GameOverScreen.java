@@ -8,7 +8,6 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Rectangle;
 import com.mygdx.game.AstroRunSavePlanet;
-import com.mygdx.game.StartScreen;
 
 public class GameOverScreen implements Screen {
     private final AstroRunSavePlanet game;
