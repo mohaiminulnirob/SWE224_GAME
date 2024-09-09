@@ -13,6 +13,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.mygdx.game.Screens.MainGameScreen;
 
 public class Astronaut {
     private Vector2 position;

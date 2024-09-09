@@ -1,4 +1,4 @@
-package com.mygdx.game;
+package com.mygdx.game.Screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
@@ -14,6 +14,11 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.Screen;
+import com.mygdx.game.*;
+import com.mygdx.game.Screens.GameOverScreen;
+import com.mygdx.game.Screens.StartScreen;
+//import com.mygdx.game.Screens.GameOverScreen;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -30,7 +35,7 @@ public class MainGameScreen implements Screen{
     private Array<Bullet> bullets;
     private Planet planet;
     private Array<Rock> rocks;
-    private  HealthPack healthPack;
+    private HealthPack healthPack;
     private Coin coin;
     private static int remainingBullets;
     private static int score;
@@ -248,6 +253,9 @@ public class MainGameScreen implements Screen{
             } else if (isPaused && exitButtonBounds.contains(touchPos.x, touchPos.y)) {
                 game.setScreen(new StartScreen(game));
             }
+        }
+        if(astronaut.isDestroyed()){
+            game.setScreen(new GameOverScreen(game));
         }
     }
     public static void UpdateScore(){
