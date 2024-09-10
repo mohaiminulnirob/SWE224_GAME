@@ -15,6 +15,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.Screen;
 import com.mygdx.game.*;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -51,7 +52,7 @@ public class MainGameScreen implements Screen{
         batch = game.getBatch();
 
         background = new Texture(Gdx.files.internal("backgrounds/space_background.png"));
-        astronautTexture = new Texture(Gdx.files.internal("aeroplane.png"));
+        astronautTexture = new Texture(Gdx.files.internal("astronaut/aeroplane.png"));
         bulletTexture = new Texture(Gdx.files.internal("bullets/bullet.png"));
         pauseButtonTexture = new Texture(Gdx.files.internal("buttons/pause_button.png"));
         resumeButtonTexture = new Texture(Gdx.files.internal("buttons/resume_button.png"));
@@ -207,7 +208,7 @@ public class MainGameScreen implements Screen{
         batch.begin();
         batch.draw(background, backgroundX, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         batch.draw(background, backgroundX + Gdx.graphics.getWidth(), 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-       for (Rock rock : rocks) {
+        for (Rock rock : rocks) {
             rock.update(isPaused ? 0 : delta,
                     planet.getPosition());
             rock.render(batch,isPaused ? 0 : delta);
@@ -276,6 +277,10 @@ public class MainGameScreen implements Screen{
     @Override
     public void resume() {
         isPaused = false;
+    }
+
+    public static int getScore() {
+        return score;
     }
 
     @Override

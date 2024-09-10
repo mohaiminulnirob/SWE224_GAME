@@ -27,7 +27,7 @@ public class HealthPack {
     private float packTimer;
 
     public HealthPack() {
-        this.healthPackTexture = new Texture(Gdx.files.internal("Health_booster.png"));
+        this.healthPackTexture = new Texture(Gdx.files.internal("HealthPack/Health_booster.png"));
         resetPosition(Gdx.graphics.getHeight() / 2, new Array<>());
         this.speed = MathUtils.random(180, 180);
         this.packTimer = 0f;
@@ -88,7 +88,7 @@ public class HealthPack {
             effectiveTimer=0.0f;
         }
         if(effective==true)
-           packTimer += delta;
+            packTimer += delta;
         if (packTimer >= PACKSHOW_INTERVAL) {
             effective=false;
             //resetPosition(position.y, rocks);
