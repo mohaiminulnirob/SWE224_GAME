@@ -23,7 +23,7 @@ public class Rock {
     private static final float[] SCALE_SIZES = {0.34f,0.38f,0.3f};
 
     public Rock() {
-        this.rockTexture = new Texture(Gdx.files.internal("rock.png"));
+        this.rockTexture = new Texture(Gdx.files.internal("rocks/rock.png"));
         resetPosition(Gdx.graphics.getHeight()/2);
         this.speed = MathUtils.random(50,100);
         hitEffect = new ParticleEffect();
