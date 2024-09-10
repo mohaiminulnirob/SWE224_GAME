@@ -15,7 +15,6 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.Screen;
 import com.mygdx.game.*;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 
