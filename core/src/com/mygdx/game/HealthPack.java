@@ -40,7 +40,7 @@ public class HealthPack {
         } catch (GdxRuntimeException e) {
             e.printStackTrace();
         }
-        hitEffect.scaleEffect(1f);
+        hitEffect.scaleEffect(5f);
 
         effectTimer = 0f;
         showEffect = false;
@@ -121,7 +121,7 @@ public class HealthPack {
 
     public void showHitEffect(float x, float y) {
         showEffect = true;
-        hitEffect.setPosition(x + 10, y);
+        hitEffect.setPosition(x , y);
         hitEffect.start();
         effectTimer = 0f;
     }
