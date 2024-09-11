@@ -63,9 +63,9 @@ public class Astronaut {
         AstronautHealthInit = AstronautHealth;
         AstronautCollison = false;
 
-        FreeTypeFontGenerator titleGenerator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/Zebulon.otf"));
+        FreeTypeFontGenerator titleGenerator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/Indulta.otf"));
         FreeTypeFontGenerator.FreeTypeFontParameter titleParameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
-        titleParameter.size = 20;
+        titleParameter.size = 30;
         titleParameter.color = Color.WHITE;
         HealthText = titleGenerator.generateFont(titleParameter);
         titleGenerator.dispose();
@@ -177,7 +177,7 @@ public class Astronaut {
 
         HealthRenderer.begin(ShapeRenderer.ShapeType.Filled);
         float barX = 150;
-        float barY = Gdx.graphics.getHeight() - 35;
+        float barY = Gdx.graphics.getHeight() - 40;
         float barWidth = 200;
         float barHeight = 20;
 
@@ -215,6 +215,9 @@ public class Astronaut {
 
     public boolean isDestroyed() {
         return isDestroyed;
+    }
+    public boolean isMoveOutOfScreen() {
+        return moveOutOfScreen;
     }
 
     public Vector2 getPosition() {

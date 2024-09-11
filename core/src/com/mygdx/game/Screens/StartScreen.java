@@ -63,7 +63,7 @@ public class StartScreen implements Screen {
                 exitButtonHeight
         );
         instructionButtonBounds = new Rectangle(
-                Gdx.graphics.getWidth()-270,
+                Gdx.graphics.getWidth()-220,
                 20,
                 instructionButtonWidth,
                 instructionButtonHeight
@@ -125,9 +125,9 @@ public class StartScreen implements Screen {
             } else if (exitButtonBounds.contains(touchPos.x, touchPos.y)) {
                 Gdx.app.exit();
             }else if (instructionButtonBounds.contains(touchPos.x, touchPos.y)) {
-                //game.setScreen(new InstructionScreen(game));
+                game.setScreen(new InstructionScreen(game));
             } else if (introductionButtonBounds.contains(touchPos.x, touchPos.y)) {
-                //game.setScreen(new IntroductionScreen(game));
+               // game.setScreen(new IntroductionScreen(game));
             }
         }
     }
@@ -173,6 +173,8 @@ public class StartScreen implements Screen {
         startBackgroundTexture.dispose();
         startTexture.dispose();
         exitTexture.dispose();
+        instructionTexture.dispose();
+        introductionTexture.dispose();
         titleFont.dispose();
         textFont.dispose();
     }

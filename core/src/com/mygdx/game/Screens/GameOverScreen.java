@@ -21,10 +21,11 @@ public class GameOverScreen implements Screen {
     private Texture retryButtonTexture;
     private Texture exitButtonTexture;
     private Texture menuButtonTexture;
+    private Texture victoryPicTexture;
     private Rectangle retryButtonBounds;
     private Rectangle exitButtonBounds;
     private Rectangle menuButtonBounds;
-    private BitmapFont scoreFont;
+    private BitmapFont Font;
     private Score score;
 
     public GameOverScreen(AstroRunSavePlanet game) {
@@ -37,6 +38,8 @@ public class GameOverScreen implements Screen {
         retryButtonTexture = new Texture(Gdx.files.internal("buttons/retry_button.png"));
         exitButtonTexture = new Texture(Gdx.files.internal("buttons/gameOver_exit_button.png"));
         menuButtonTexture = new Texture(Gdx.files.internal("buttons/menu_button.png"));
+        victoryPicTexture = new Texture(Gdx.files.internal("astronaut/victory_pic.png"));
+
         float buttonWidth = 200;
         float buttonHeight = 80;
         retryButtonBounds = new Rectangle(
@@ -59,11 +62,11 @@ public class GameOverScreen implements Screen {
         );
         score = new Score();
 
-        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/Zebulon.otf"));
+        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/Zebulon Bold.otf"));
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
         parameter.size = 30;
         parameter.color = Color.WHITE;
-        scoreFont = generator.generateFont(parameter);
+        Font = generator.generateFont(parameter);
         generator.dispose();
     }
 
@@ -81,14 +84,23 @@ public class GameOverScreen implements Screen {
         String currentScoreText = "Score: " + score.getCurrentScore();
         String highScoreText = "High Score: " + score.getHighScore();
 
-        float currentScoreX = 50;
-        float currentScoreY = Gdx.graphics.getHeight() - 50;
+        float currentScoreX = 100;
+        float currentScoreY = Gdx.graphics.getHeight()/2f + 150;
 
         float highScoreX = Gdx.graphics.getWidth() - 400;
-        float highScoreY = Gdx.graphics.getHeight() - 50;
+        float highScoreY = Gdx.graphics.getHeight()/2f + 150;
+        Font.getData().setScale(2f);
+        Font.setColor(Color.RED);
+        Font.draw(batch,"GAME OVER!",Gdx.graphics.getWidth()/2f-250,Gdx.graphics.getHeight()-100);
+        Font.getData().setScale(1f);
+        Font.setColor(Color.WHITE);
+        Font.draw(batch, currentScoreText, currentScoreX, currentScoreY);
+        Font.draw(batch, highScoreText, highScoreX, highScoreY);
 
-        scoreFont.draw(batch, currentScoreText, currentScoreX, currentScoreY);
-        scoreFont.draw(batch, highScoreText, highScoreX, highScoreY);
+        if (score.getCurrentScore() >= score.getHighScore()) {
+            Font.draw(batch, "HURRAY! HIGH SCORE!", 100, Gdx.graphics.getHeight() / 2f + 50);
+            batch.draw(victoryPicTexture, 150, Gdx.graphics.getHeight() / 2f -270, 250, 250);
+        }
 
         batch.end();
         if (Gdx.input.isTouched()) {
@@ -131,6 +143,6 @@ public class GameOverScreen implements Screen {
         gameOverBackground.dispose();
         retryButtonTexture.dispose();
         exitButtonTexture.dispose();
+        victoryPicTexture.dispose();
     }
 }
-

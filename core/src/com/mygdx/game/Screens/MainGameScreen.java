@@ -36,8 +36,7 @@ public class MainGameScreen implements Screen{
     private Coin coin;
     private static int remainingBullets;
     private static int score;
-    private BitmapFont BulletText;
-    private BitmapFont scoreText;
+    private BitmapFont Text;
     private boolean isPaused = false;
     private Rectangle pauseButtonBounds;
     private Rectangle resumeButtonBounds;
@@ -68,13 +67,13 @@ public class MainGameScreen implements Screen{
         coin = new Coin();
         remainingBullets = 10;
         score = 0;
-        BulletText = new BitmapFont();
+        Text = new BitmapFont();
 
-        FreeTypeFontGenerator titleGenerator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/Zebulon.otf"));
+        FreeTypeFontGenerator titleGenerator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/Indulta.otf"));
         FreeTypeFontGenerator.FreeTypeFontParameter titleParameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
-        titleParameter.size = 22;
+        titleParameter.size = 30;
         titleParameter.color = Color.WHITE;
-        scoreText = titleGenerator.generateFont(titleParameter);
+        Text = titleGenerator.generateFont(titleParameter);
         titleGenerator.dispose();
 
         float buttonWidth = 100;
@@ -233,11 +232,15 @@ public class MainGameScreen implements Screen{
         } else {
             batch.draw(pauseButtonTexture, pauseButtonBounds.x, pauseButtonBounds.y, pauseButtonBounds.width, pauseButtonBounds.height);
         }
-        scoreText.setColor(Color.GREEN);
-        scoreText.draw(batch, "Score: " + score,Gdx.graphics.getWidth() - 380 , Gdx.graphics.getHeight() - 17);
-        scoreText.setColor(Color.MAGENTA);
-        scoreText.draw(batch, "Bullets: " + remainingBullets, Gdx.graphics.getWidth() - 190, Gdx.graphics.getHeight() - 17);
-
+        Text.setColor(Color.GREEN);
+        Text.getData().setScale(1f);
+        Text.draw(batch, "Score: " + score,Gdx.graphics.getWidth() - 380 , Gdx.graphics.getHeight() - 17);
+        Text.setColor(Color.MAGENTA);
+        Text.draw(batch, "Bullets: " + remainingBullets, Gdx.graphics.getWidth() - 190, Gdx.graphics.getHeight() - 17);
+        Text.setColor(Color.RED);
+        Text.getData().setScale(2f);
+        if(astronaut.isMoveOutOfScreen())
+            Text.draw(batch,"Game Over!",Gdx.graphics.getWidth()/2f-200,Gdx.graphics.getHeight()/2f + 25);
         batch.end();
 
         if (Gdx.input.isTouched()) {
@@ -307,7 +310,7 @@ public class MainGameScreen implements Screen{
         pauseButtonTexture.dispose();
         resumeButtonTexture.dispose();
         exitButtonTexture.dispose();
-        BulletText.dispose();
+        Text.dispose();
         healthPack.dispose();
         coin.dispose();
     }
