@@ -18,8 +18,9 @@ public class StartScreen implements Screen {
     private Texture startBackgroundTexture;
     private Texture startTexture;
     private Texture exitTexture;
+    private Texture instructionTexture, introductionTexture;
     private Rectangle startButtonBounds;
-    private Rectangle exitButtonBounds;
+    private Rectangle exitButtonBounds,instructionButtonBounds, introductionButtonBounds;
     private AstroRunSavePlanet game;
     private BitmapFont titleFont;
     private BitmapFont textFont;
@@ -37,11 +38,16 @@ public class StartScreen implements Screen {
         startBackgroundTexture = new Texture(Gdx.files.internal("backgrounds/start_background.png"));
         startTexture = new Texture(Gdx.files.internal("buttons/start_button.png"));
         exitTexture = new Texture(Gdx.files.internal("buttons/exit_button.png"));
-
-        float startButtonWidth = 400;
-        float startButtonHeight = 100;
-        float exitButtonWidth = 400;
-        float exitButtonHeight = 100;
+        instructionTexture= new Texture(Gdx.files.internal("buttons/instruction_button.png"));
+        introductionTexture= new Texture(Gdx.files.internal("buttons/introduction_button.png"));
+        float startButtonWidth = 300;
+        float startButtonHeight = 80;
+        float exitButtonWidth = 300;
+        float exitButtonHeight = 80;
+        float instructionButtonWidth = 200;
+        float instructionButtonHeight = 80;
+        float introductionButtonWidth = 200;
+        float introductionButtonHeight = 80;
 
         startButtonBounds = new Rectangle(
                 Gdx.graphics.getWidth() / 2 - startButtonWidth / 2,
@@ -52,9 +58,21 @@ public class StartScreen implements Screen {
 
         exitButtonBounds = new Rectangle(
                 Gdx.graphics.getWidth() / 2 - exitButtonWidth / 2,
-                Gdx.graphics.getHeight() / 2 - startButtonHeight / 2 - 150,
+                Gdx.graphics.getHeight() / 2 - startButtonHeight / 2 - 100,
                 exitButtonWidth,
                 exitButtonHeight
+        );
+        instructionButtonBounds = new Rectangle(
+                Gdx.graphics.getWidth()-270,
+                20,
+                instructionButtonWidth,
+                instructionButtonHeight
+        );
+        introductionButtonBounds = new Rectangle(
+                20,
+                20,
+                introductionButtonWidth,
+                introductionButtonHeight
         );
 
         FreeTypeFontGenerator titleGenerator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/Zebulon Bold.otf"));
@@ -87,7 +105,8 @@ public class StartScreen implements Screen {
         batch.draw(startBackgroundTexture, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         batch.draw(startTexture, startButtonBounds.x, startButtonBounds.y, startButtonBounds.width, startButtonBounds.height);
         batch.draw(exitTexture, exitButtonBounds.x, exitButtonBounds.y, exitButtonBounds.width, exitButtonBounds.height);
-
+        batch.draw(introductionTexture, introductionButtonBounds.x, introductionButtonBounds.y, introductionButtonBounds.width, introductionButtonBounds.height);
+        batch.draw(instructionTexture, instructionButtonBounds.x, instructionButtonBounds.y, instructionButtonBounds.width, instructionButtonBounds.height);
         titleFont.setColor(Color.MAGENTA);
         titleFont.draw(batch, "ASTRO RUN", 100, Gdx.graphics.getHeight() - 50);
 
@@ -105,6 +124,10 @@ public class StartScreen implements Screen {
                 game.setScreen(new MainGameScreen(game));
             } else if (exitButtonBounds.contains(touchPos.x, touchPos.y)) {
                 Gdx.app.exit();
+            }else if (instructionButtonBounds.contains(touchPos.x, touchPos.y)) {
+                //game.setScreen(new InstructionScreen(game));
+            } else if (introductionButtonBounds.contains(touchPos.x, touchPos.y)) {
+                //game.setScreen(new IntroductionScreen(game));
             }
         }
     }

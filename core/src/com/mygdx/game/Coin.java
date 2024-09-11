@@ -114,6 +114,7 @@ public class Coin {
             effectTimer += delta;
             if (effectTimer >= 1.0f) {
                 hitEffect.reset();
+                //hitEffect.scaleEffect(1f);
                 showEffect = false;
             }
         }
@@ -121,7 +122,7 @@ public class Coin {
 
     public void showHitEffect(float x, float y) {
         showEffect = true;
-        hitEffect.setPosition(x + 10, y);
+        hitEffect.setPosition(x+10, y);
         hitEffect.start();
         effectTimer = 0f;
     }

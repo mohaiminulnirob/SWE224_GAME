@@ -121,13 +121,13 @@ public class MainGameScreen implements Screen{
                 }else if(healthPack.isColliding(bullet) && healthPack.isEffective()){
                     Vector2 position = bullet.getPosition();
                     healthPack.showHitEffect(position.x,position.y);
-                    healthPack.setPackTimer(7.0f);
+                    healthPack.setPackTimer(6.9f);
                     bulletIterator.remove();
                 }
                 else if(coin.isColliding(bullet) && coin.isEffective()){
                     Vector2 position = bullet.getPosition();
                     coin.showHitEffect(position.x,position.y);
-                    coin.setCoinTimer(28.0f);
+                    coin.setCoinTimer(27.9f);
                     bulletIterator.remove();
                 }
                 else {
@@ -157,13 +157,13 @@ public class MainGameScreen implements Screen{
                 else if(healthPack.isColliding(alienBullet) && healthPack.isEffective()){
                     Vector2 position = alienBullet.getPosition();
                     healthPack.showHitEffect(position.x,position.y);
-                    healthPack.setPackTimer(7.0f);
+                    healthPack.setPackTimer(6.9f);
                     alienBulletIterator.remove();
                 }
                 else if(coin.isColliding(alienBullet) && coin.isEffective()){
                     Vector2 position = alienBullet.getPosition();
                     coin.showHitEffect(position.x,position.y);
-                    coin.setCoinTimer(28.0f);
+                    coin.setCoinTimer(27.9f);
                     alienBulletIterator.remove();
                 }
                 else{
