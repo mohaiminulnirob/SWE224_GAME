@@ -60,7 +60,7 @@ public class InstructionScreen implements Screen {
     public void render(float delta) {
         timePassed += delta;
 
-        if (currentInstructionCount < instructions.length && timePassed > 1f) {
+        if (currentInstructionCount < instructions.length && timePassed > 0.5f) {
             currentInstructionCount++;
             timePassed = 0f;
         }
@@ -72,11 +72,11 @@ public class InstructionScreen implements Screen {
         batch.begin();
         batch.draw(backgroundTexture, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
-        font.getData().setScale(2);
-        font.setColor(Color.GREEN);
+        font.getData().setScale(1.5f);
+        font.setColor(Color.BLUE);
         font.draw(batch, "INSTRUCTIONS", Gdx.graphics.getWidth() / 2f - 150, Gdx.graphics.getHeight() - 50);
 
-        font.getData().setScale(1.2f);
+        font.getData().setScale(1f);
         font.setColor(Color.WHITE);
         for (int i = 0; i < currentInstructionCount; i++) {
             font.draw(batch, instructions[i], 100, Gdx.graphics.getHeight() - 150 - (i * 70));
@@ -121,3 +121,4 @@ public class InstructionScreen implements Screen {
         backButtonTexture.dispose();
     }
 }
+
