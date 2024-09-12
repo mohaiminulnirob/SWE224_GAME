@@ -127,7 +127,7 @@ public class StartScreen implements Screen {
             }else if (instructionButtonBounds.contains(touchPos.x, touchPos.y)) {
                 game.setScreen(new InstructionScreen(game));
             } else if (introductionButtonBounds.contains(touchPos.x, touchPos.y)) {
-               // game.setScreen(new IntroductionScreen(game));
+                game.setScreen(new IntroductionScreen(game));
             }
         }
     }
