@@ -12,6 +12,7 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFont
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
 import com.mygdx.game.AstroRunSavePlanet;
+import com.mygdx.game.GameSound;
 
 public class InstructionScreen implements Screen {
     private final AstroRunSavePlanet game;
@@ -20,6 +21,7 @@ public class InstructionScreen implements Screen {
     private float timePassed = 0f;
     private String[] instructions;
     private int currentInstructionCount = 0;
+    private GameSound sound;
     private Texture backButtonTexture;
     private Rectangle backButtonBounds;
     private OrthographicCamera camera;
@@ -27,7 +29,7 @@ public class InstructionScreen implements Screen {
     public InstructionScreen(AstroRunSavePlanet game) {
         this.game = game;
         backgroundTexture = new Texture(Gdx.files.internal("backgrounds/instructionScreen_background.png"));
-
+        sound = new GameSound();
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/Indulta.otf"));
         FreeTypeFontParameter parameter = new FreeTypeFontParameter();
         parameter.size = 25;
@@ -91,6 +93,7 @@ public class InstructionScreen implements Screen {
             camera.unproject(touchPos);
 
             if (backButtonBounds.contains(touchPos.x, touchPos.y)) {
+                sound.playClick();
                 game.setScreen(new StartScreen(game));
                 dispose();
             }
@@ -118,6 +121,7 @@ public class InstructionScreen implements Screen {
     public void dispose() {
         backgroundTexture.dispose();
         font.dispose();
+        sound.dispose();
         backButtonTexture.dispose();
     }
 }

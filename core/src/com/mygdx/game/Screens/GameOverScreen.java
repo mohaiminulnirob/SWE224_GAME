@@ -11,6 +11,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Rectangle;
 import com.mygdx.game.AstroRunSavePlanet;
+import com.mygdx.game.GameSound;
 import com.mygdx.game.Score;
 
 public class GameOverScreen implements Screen {
@@ -22,6 +23,7 @@ public class GameOverScreen implements Screen {
     private Texture exitButtonTexture;
     private Texture menuButtonTexture;
     private Texture victoryPicTexture;
+    private GameSound sound;
     private Rectangle retryButtonBounds;
     private Rectangle exitButtonBounds;
     private Rectangle menuButtonBounds;
@@ -33,7 +35,7 @@ public class GameOverScreen implements Screen {
         this.camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         this.camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         this.batch = game.getBatch();
-
+        sound = new GameSound();
         gameOverBackground = new Texture(Gdx.files.internal("backgrounds/gameOver_background.png"));
         retryButtonTexture = new Texture(Gdx.files.internal("buttons/retry_button.png"));
         exitButtonTexture = new Texture(Gdx.files.internal("buttons/gameOver_exit_button.png"));
@@ -108,10 +110,13 @@ public class GameOverScreen implements Screen {
             touchPos = camera.unproject(touchPos);
 
             if (retryButtonBounds.contains(touchPos.x, touchPos.y)) {
+                sound.playClick();
                 game.setScreen(new MainGameScreen(game));
             } else if (menuButtonBounds.contains(touchPos.x, touchPos.y)) {
+                sound.playClick();
                 game.setScreen(new StartScreen(game));
             } else if (exitButtonBounds.contains(touchPos.x, touchPos.y)) {
+                sound.playClick();
                 Gdx.app.exit();
             }
         }
@@ -143,6 +148,7 @@ public class GameOverScreen implements Screen {
         gameOverBackground.dispose();
         retryButtonTexture.dispose();
         exitButtonTexture.dispose();
+        sound.dispose();
         victoryPicTexture.dispose();
     }
 }

@@ -74,6 +74,7 @@ public class Astronaut {
     public void Collision() {
         AstronautHealth--;
         if (AstronautHealth == 0) {
+            MainGameScreen.destroySound();
             moveOutOfScreen = true;
             AstronautCollison = false;
         } else {
