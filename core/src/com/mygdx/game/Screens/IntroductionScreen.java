@@ -29,6 +29,7 @@ public class IntroductionScreen implements Screen {
         this.game = game;
         backgroundTexture = new Texture(Gdx.files.internal("backgrounds/introductionScreen_background.png"));
         sound = new GameSound();
+
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/Indulta.otf"));
         FreeTypeFontParameter parameter = new FreeTypeFontParameter();
         parameter.size = 30;
