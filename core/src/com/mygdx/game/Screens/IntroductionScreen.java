@@ -13,6 +13,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Align;
 import com.mygdx.game.AstroRunSavePlanet;
+import com.mygdx.game.GameSound;
 
 public class IntroductionScreen implements Screen {
     private final AstroRunSavePlanet game;
@@ -21,11 +22,13 @@ public class IntroductionScreen implements Screen {
     private String description;
     private Texture backButtonTexture;
     private Rectangle backButtonBounds;
+    private GameSound sound;
     private OrthographicCamera camera;
 
     public IntroductionScreen(AstroRunSavePlanet game) {
         this.game = game;
         backgroundTexture = new Texture(Gdx.files.internal("backgrounds/introductionScreen_background.png"));
+        sound = new GameSound();
 
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/Indulta.otf"));
         FreeTypeFontParameter parameter = new FreeTypeFontParameter();
@@ -71,6 +74,7 @@ public class IntroductionScreen implements Screen {
             camera.unproject(touchPos);
 
             if (backButtonBounds.contains(touchPos.x, touchPos.y)) {
+                sound.playClick();
                 game.setScreen(new StartScreen(game));
                 dispose();
             }
@@ -97,5 +101,6 @@ public class IntroductionScreen implements Screen {
     public void dispose() {
         backgroundTexture.dispose();
         font.dispose();
+        sound.dispose();
     }
 }

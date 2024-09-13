@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.Screen;
 import com.mygdx.game.AstroRunSavePlanet;
+import com.mygdx.game.GameSound;
 
 public class StartScreen implements Screen {
     private OrthographicCamera camera;
@@ -22,19 +23,21 @@ public class StartScreen implements Screen {
     private Rectangle startButtonBounds;
     private Rectangle exitButtonBounds,instructionButtonBounds, introductionButtonBounds;
     private AstroRunSavePlanet game;
+    private GameSound sound;
     private BitmapFont titleFont;
     private BitmapFont textFont;
     private String[] textLines;
     private float[] lineTimers;
     private float letterInterval;
     private float totalTime;
+    private long backgroundSoundId;
 
     public StartScreen(AstroRunSavePlanet game) {
         this.game = game;
         this.camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         this.camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         this.batch = game.getBatch();
-
+        sound = new GameSound();
         startBackgroundTexture = new Texture(Gdx.files.internal("backgrounds/start_background.png"));
         startTexture = new Texture(Gdx.files.internal("buttons/start_button.png"));
         exitTexture = new Texture(Gdx.files.internal("buttons/exit_button.png"));
@@ -121,12 +124,16 @@ public class StartScreen implements Screen {
             Vector3 touchPos = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
             touchPos = camera.unproject(touchPos);
             if (startButtonBounds.contains(touchPos.x, touchPos.y)) {
+                sound.playClick();
                 game.setScreen(new MainGameScreen(game));
             } else if (exitButtonBounds.contains(touchPos.x, touchPos.y)) {
+                sound.playClick();
                 Gdx.app.exit();
             }else if (instructionButtonBounds.contains(touchPos.x, touchPos.y)) {
+                sound.playClick();
                 game.setScreen(new InstructionScreen(game));
             } else if (introductionButtonBounds.contains(touchPos.x, touchPos.y)) {
+                sound.playClick();
                 game.setScreen(new IntroductionScreen(game));
             }
         }
@@ -162,10 +169,12 @@ public class StartScreen implements Screen {
 
     @Override
     public void hide() {
+        sound.stopStartBackground();
     }
 
     @Override
     public void show() {
+        backgroundSoundId = sound.playStartBackground();
     }
 
     @Override
@@ -176,6 +185,8 @@ public class StartScreen implements Screen {
         instructionTexture.dispose();
         introductionTexture.dispose();
         titleFont.dispose();
+        sound.stopStartBackground();
+        sound.dispose();
         textFont.dispose();
     }
 }

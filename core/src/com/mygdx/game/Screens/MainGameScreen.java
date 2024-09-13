@@ -23,6 +23,7 @@ public class MainGameScreen implements Screen{
     private OrthographicCamera camera;
     private SpriteBatch batch;
     private Texture background;
+    private static GameSound sound;
     private Texture astronautTexture;
     private Texture bulletTexture;
     private Texture pauseButtonTexture;
@@ -49,7 +50,7 @@ public class MainGameScreen implements Screen{
         camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         batch = game.getBatch();
-
+        sound = new GameSound();
         background = new Texture(Gdx.files.internal("backgrounds/space_background.png"));
         astronautTexture = new Texture(Gdx.files.internal("astronaut/aeroplane.png"));
         bulletTexture = new Texture(Gdx.files.internal("bullets/bullet.png"));
@@ -97,6 +98,7 @@ public class MainGameScreen implements Screen{
             astronaut.update(delta);
 
             if (Gdx.input.isKeyJustPressed(Keys.ENTER) && remainingBullets > 0 && !astronaut.isDestroyed()) {
+                sound.playShoot();
                 float bulletX = astronaut.getPosition().x + astronautTexture.getWidth() * 0.5f;
                 float bulletY = astronaut.getPosition().y + astronautTexture.getHeight() * 0.18f;
                 bullets.add(new Bullet(bulletX, bulletY, 1, 0, 300, bulletTexture));
@@ -149,7 +151,7 @@ public class MainGameScreen implements Screen{
                         || alienBullet.getPosition().y < 0 || alienBullet.getPosition().y > Gdx.graphics.getHeight()) {
                     alienBulletIterator.remove();
                 } else if (astronaut.isColliding(alienBullet)) {
-
+                    //sound.playExplosion();
                     astronaut.Collision();
                     alienBulletIterator.remove();
                 }
@@ -178,10 +180,12 @@ public class MainGameScreen implements Screen{
                 }
             }
             if(astronaut.isCollidingWithHealthPack(healthPack) && healthPack.isEffective()) {
+                sound.playHealthBooster();
                 healthPack.setPackTimer(7.0f);
                 astronaut.consumeHealthpack();
             }
             if(astronaut.isCollidingWithCoin(coin) && coin.isEffective()) {
+                sound.playCoin();
                 coin.setCoinTimer(28.0f);
                 astronaut.consumeCoin();
             }
@@ -189,11 +193,13 @@ public class MainGameScreen implements Screen{
             for( Rock rock:rocks){
                 if(astronaut.isCollidingWithRock(rock) && rock.effectiveness()) {
                     rock.MakeInactive();
+                    sound.playCollision();
                     astronaut.Collision();
                 }
 
             }
             if(astronaut.isCollidingWithPlanet(planet) && planet.effectiveness()){
+                sound.playCollision();
                 planet.MakeInactive();
                 astronaut.Collision();
             }
@@ -247,10 +253,15 @@ public class MainGameScreen implements Screen{
             Vector3 touchPos = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
             camera.unproject(touchPos);
             if (!isPaused && pauseButtonBounds.contains(touchPos.x, touchPos.y)) {
+                sound.pauseGameBackground();
+                sound.playClick();
                 isPaused = true;
             } else if (isPaused && resumeButtonBounds.contains(touchPos.x, touchPos.y)) {
+                sound.resumeGameBackground();
+                sound.playClick();
                 isPaused = false;
             } else if (isPaused && exitButtonBounds.contains(touchPos.x, touchPos.y)) {
+                sound.playClick();
                 game.setScreen(new StartScreen(game));
             }
         }
@@ -265,6 +276,13 @@ public class MainGameScreen implements Screen{
     public static void UpdateRemBullets(){
         remainingBullets+=10;
         //score+=10;
+    }
+
+    public static void savedSound(){
+        sound.playSaved();
+    }
+    public static void destroySound(){
+        sound.playCollision2();
     }
 
     @Override
@@ -288,10 +306,12 @@ public class MainGameScreen implements Screen{
 
     @Override
     public void hide() {
+        sound.stopGameBackground();
     }
 
     @Override
     public void show() {
+        long backgroundSoundId = sound.playGameBackground();
     }
 
     @Override
@@ -311,6 +331,8 @@ public class MainGameScreen implements Screen{
         resumeButtonTexture.dispose();
         exitButtonTexture.dispose();
         Text.dispose();
+        sound.stopGameBackground();
+        sound.dispose();
         healthPack.dispose();
         coin.dispose();
     }

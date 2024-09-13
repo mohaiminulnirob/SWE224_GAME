@@ -31,6 +31,7 @@ public class Planet {
     private boolean showEffect;
     private boolean effective;
     private float effectiveTimer;
+    //private GameSound sound;
     private static final float ALIEN_SCALE = 1.5f;
     private static final float SAVED_SCALE = 1.5f;
     private static final float PLANET_SPEED = 100;
@@ -81,6 +82,7 @@ public class Planet {
             hitCount++;
             if (hitCount >= 5) {
                 MainGameScreen.UpdateScore();
+                MainGameScreen.savedSound();
                 convertToSaved();
             }
         }
@@ -280,6 +282,7 @@ public class Planet {
         for (Bullet alienBullet : alienBullets) {
             alienBullet.dispose();
         }
+        //sound.dispose();
         savedTexture.dispose();
         hitEffect.dispose();
     }
