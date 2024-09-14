@@ -206,7 +206,7 @@ public class Astronaut {
         HealthRenderer.dispose();
         HealthText.dispose();
     }
-    public void consumeHealthpack(){
+    public void consumeHealthPack(){
         int tempHealth= AstronautHealth+1;
         AstronautHealth= Math.min(AstronautHealthInit,tempHealth);
     }

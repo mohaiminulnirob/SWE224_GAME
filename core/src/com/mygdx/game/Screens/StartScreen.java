@@ -20,8 +20,10 @@ public class StartScreen implements Screen {
     private Texture startTexture;
     private Texture exitTexture;
     private Texture instructionTexture, introductionTexture;
+    private Texture galacticTexture,trainingTexture;
     private Rectangle startButtonBounds;
     private Rectangle exitButtonBounds,instructionButtonBounds, introductionButtonBounds;
+    private Rectangle galacticBounds, trainingBounds;
     private AstroRunSavePlanet game;
     private GameSound sound;
     private BitmapFont titleFont;
@@ -31,6 +33,7 @@ public class StartScreen implements Screen {
     private float letterInterval;
     private float totalTime;
     private long backgroundSoundId;
+    boolean levelShow;
 
     public StartScreen(AstroRunSavePlanet game) {
         this.game = game;
@@ -43,6 +46,8 @@ public class StartScreen implements Screen {
         exitTexture = new Texture(Gdx.files.internal("buttons/exit_button.png"));
         instructionTexture= new Texture(Gdx.files.internal("buttons/instruction_button.png"));
         introductionTexture= new Texture(Gdx.files.internal("buttons/introduction_button.png"));
+        galacticTexture = new Texture(Gdx.files.internal("buttons/galactic_button.png"));
+        trainingTexture = new Texture(Gdx.files.internal("buttons/training_button.png"));
         float startButtonWidth = 300;
         float startButtonHeight = 80;
         float exitButtonWidth = 300;
@@ -51,6 +56,11 @@ public class StartScreen implements Screen {
         float instructionButtonHeight = 80;
         float introductionButtonWidth = 200;
         float introductionButtonHeight = 80;
+        float galacticButtonWidth = 230;
+        float trainingButtonWidth = 230;
+        float galacticButtonHeight = 80;
+        float trainingButtonHeight = 80;
+        levelShow = false;
 
         startButtonBounds = new Rectangle(
                 Gdx.graphics.getWidth() / 2 - startButtonWidth / 2,
@@ -76,6 +86,18 @@ public class StartScreen implements Screen {
                 20,
                 introductionButtonWidth,
                 introductionButtonHeight
+        );
+        galacticBounds = new Rectangle(
+            (Gdx.graphics.getWidth() / 2f) + 160,
+            (Gdx.graphics.getHeight() / 2f) - 85,
+            galacticButtonWidth,
+            galacticButtonHeight
+        );
+        trainingBounds = new Rectangle(
+                (Gdx.graphics.getWidth() / 2f) + 160,
+                (Gdx.graphics.getHeight() / 2f) + 5,
+                trainingButtonWidth,
+                trainingButtonHeight
         );
 
         FreeTypeFontGenerator titleGenerator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/Zebulon Bold.otf"));
@@ -110,6 +132,10 @@ public class StartScreen implements Screen {
         batch.draw(exitTexture, exitButtonBounds.x, exitButtonBounds.y, exitButtonBounds.width, exitButtonBounds.height);
         batch.draw(introductionTexture, introductionButtonBounds.x, introductionButtonBounds.y, introductionButtonBounds.width, introductionButtonBounds.height);
         batch.draw(instructionTexture, instructionButtonBounds.x, instructionButtonBounds.y, instructionButtonBounds.width, instructionButtonBounds.height);
+        if(levelShow){
+            batch.draw(trainingTexture, trainingBounds.x, trainingBounds.y, trainingBounds.width, trainingBounds.height);
+            batch.draw(galacticTexture, galacticBounds.x, galacticBounds.y, galacticBounds.width, galacticBounds.height);
+        }
         titleFont.setColor(Color.MAGENTA);
         titleFont.draw(batch, "ASTRO RUN", 100, Gdx.graphics.getHeight() - 50);
 
@@ -123,9 +149,10 @@ public class StartScreen implements Screen {
         if (Gdx.input.isTouched()) {
             Vector3 touchPos = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
             touchPos = camera.unproject(touchPos);
-            if (startButtonBounds.contains(touchPos.x, touchPos.y)) {
+            if (startButtonBounds.contains(touchPos.x, touchPos.y) && !levelShow) {
                 sound.playClick();
-                game.setScreen(new MainGameScreen(game));
+                levelShow = true;
+                //game.setScreen(new MainGameScreen(game));
             } else if (exitButtonBounds.contains(touchPos.x, touchPos.y)) {
                 sound.playClick();
                 Gdx.app.exit();
@@ -135,6 +162,16 @@ public class StartScreen implements Screen {
             } else if (introductionButtonBounds.contains(touchPos.x, touchPos.y)) {
                 sound.playClick();
                 game.setScreen(new IntroductionScreen(game));
+            }
+            else if (introductionButtonBounds.contains(touchPos.x, touchPos.y)) {
+                sound.playClick();
+                game.setScreen(new IntroductionScreen(game));
+            } else if (galacticBounds.contains(touchPos.x, touchPos.y) && levelShow) {
+                sound.playClick();
+                game.setScreen(new MainGameScreen(game));
+            } else if (trainingBounds.contains(touchPos.x, touchPos.y) && levelShow) {
+                sound.playClick();
+                //game.setScreen(new TrainingScreen(game));
             }
         }
     }
@@ -184,6 +221,8 @@ public class StartScreen implements Screen {
         exitTexture.dispose();
         instructionTexture.dispose();
         introductionTexture.dispose();
+        trainingTexture.dispose();
+        galacticTexture.dispose();
         titleFont.dispose();
         sound.stopStartBackground();
         sound.dispose();
