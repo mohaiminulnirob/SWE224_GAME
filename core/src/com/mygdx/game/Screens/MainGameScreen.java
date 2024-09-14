@@ -151,7 +151,7 @@ public class MainGameScreen implements Screen{
                         || alienBullet.getPosition().y < 0 || alienBullet.getPosition().y > Gdx.graphics.getHeight()) {
                     alienBulletIterator.remove();
                 } else if (astronaut.isColliding(alienBullet)) {
-                    //sound.playExplosion();
+                    sound.playExplosion();
                     astronaut.Collision();
                     alienBulletIterator.remove();
                 }
@@ -182,7 +182,7 @@ public class MainGameScreen implements Screen{
             if(astronaut.isCollidingWithHealthPack(healthPack) && healthPack.isEffective()) {
                 sound.playHealthBooster();
                 healthPack.setPackTimer(7.0f);
-                astronaut.consumeHealthpack();
+                astronaut.consumeHealthPack();
             }
             if(astronaut.isCollidingWithCoin(coin) && coin.isEffective()) {
                 sound.playCoin();
