@@ -10,6 +10,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.mygdx.game.Screens.MainGameScreen;
+import com.mygdx.game.Screens.TrainingScreen;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -31,10 +32,9 @@ public class Planet {
     private boolean showEffect;
     private boolean effective;
     private float effectiveTimer;
-    //private GameSound sound;
     private static final float ALIEN_SCALE = 1.5f;
     private static final float SAVED_SCALE = 1.5f;
-    private static final float PLANET_SPEED = 100;
+    private float PLANET_SPEED = 100;
 
     public Planet() {
         position = new Vector2(800, 300);
@@ -82,6 +82,7 @@ public class Planet {
             hitCount++;
             if (hitCount >= 5) {
                 MainGameScreen.UpdateScore();
+                TrainingScreen.UpdateScore();
                 MainGameScreen.savedSound();
                 convertToSaved();
             }
@@ -166,7 +167,11 @@ public class Planet {
         collisionPolygon.setPosition(position.x, position.y);
 
         if (position.x + currentAlienTexture.getWidth() * ALIEN_SCALE < 0) {
-            resetPosition(rocks);
+            if(rocks!=null)
+               resetPosition(rocks);
+            else if(rocks==null){
+                resetPosition(null);
+            }
         }
     }
 
@@ -209,9 +214,11 @@ public class Planet {
         while (!is_valid) {
             position.y = MathUtils.random(0, Gdx.graphics.getHeight() * 0.8f - currentAlienTexture.getHeight() * ALIEN_SCALE);
             boolean is_valid1 = true;
-            for (Rock rock : rocks) {
-                if (position.y >= rock.getY() - 150 && position.y <= rock.getY() + 150) {
-                    is_valid1 = false;
+            if(rocks!=null) {
+                for (Rock rock : rocks) {
+                    if (position.y >= rock.getY() - 150 && position.y <= rock.getY() + 150) {
+                        is_valid1 = false;
+                    }
                 }
             }
             if (is_valid1) {
@@ -266,6 +273,13 @@ public class Planet {
         effectiveTimer=0f;
         effective=false;
     }
+    public float getPLANET_SPEED() {
+        return PLANET_SPEED;
+    }
+
+    public void setPLANET_SPEED(float PLANET_SPEED) {
+        this.PLANET_SPEED += PLANET_SPEED;
+    }
 
     public Vector2 getPosition() {
         return position;
@@ -273,6 +287,13 @@ public class Planet {
 
     public Polygon getCollisionPolygon() {
         return collisionPolygon;
+    }
+    public void setShootInterval(float shootInterval) {
+        this.shootInterval  += shootInterval;
+    }
+
+    public float getShootInterval() {
+        return shootInterval;
     }
 
     public void dispose() {
@@ -282,7 +303,6 @@ public class Planet {
         for (Bullet alienBullet : alienBullets) {
             alienBullet.dispose();
         }
-        //sound.dispose();
         savedTexture.dispose();
         hitEffect.dispose();
     }

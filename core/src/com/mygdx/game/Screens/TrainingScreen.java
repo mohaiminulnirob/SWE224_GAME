@@ -10,16 +10,14 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.Screen;
 import com.mygdx.game.*;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 
-public class MainGameScreen implements Screen{
+public class TrainingScreen implements Screen {
     private OrthographicCamera camera;
     private SpriteBatch batch;
     private Texture background;
@@ -29,12 +27,12 @@ public class MainGameScreen implements Screen{
     private Texture pauseButtonTexture;
     private Texture exitButtonTexture;
     private Texture resumeButtonTexture;
+    private Texture yesButtonTexture;
+    private Texture noButtonTexture;
     private Astronaut astronaut;
     private Array<Bullet> bullets;
     private Planet planet;
-    private Array<Rock> rocks;
-    private HealthPack healthPack;
-    private Coin coin;
+    public static boolean Successful,End;
     private static int remainingBullets;
     private static int score;
     private BitmapFont Text;
@@ -43,10 +41,12 @@ public class MainGameScreen implements Screen{
     private Rectangle pauseButtonBounds;
     private Rectangle resumeButtonBounds;
     private Rectangle exitButtonBounds;
+    private Rectangle yesButtonBounds;
+    private Rectangle noButtonBounds;
     private float backgroundX;
     private AstroRunSavePlanet game;
 
-    public MainGameScreen(AstroRunSavePlanet game) {
+    public TrainingScreen(AstroRunSavePlanet game) {
         this.game = game;
         camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -58,17 +58,15 @@ public class MainGameScreen implements Screen{
         pauseButtonTexture = new Texture(Gdx.files.internal("buttons/pause_button.png"));
         resumeButtonTexture = new Texture(Gdx.files.internal("buttons/resume_button.png"));
         exitButtonTexture = new Texture(Gdx.files.internal("buttons/exit_button.png"));
+        yesButtonTexture = new Texture(Gdx.files.internal("buttons/yes_button.png"));
+        noButtonTexture = new Texture(Gdx.files.internal("buttons/no_button.png"));
         astronaut = new Astronaut(100, 300, astronautTexture);
         bullets = new Array<>();
         planet = new Planet();
-        rocks = new Array<>();
-        for (int i = 0; i < 3; i++) {
-            rocks.add(new Rock());
-        }
-        healthPack = new HealthPack();
-        coin = new Coin();
         remainingBullets = 10;
         score = 0;
+        Successful=false;
+        End =false;
         Text = new BitmapFont();
 
         FreeTypeFontGenerator titleGenerator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/Indulta.otf"));
@@ -86,6 +84,18 @@ public class MainGameScreen implements Screen{
         pauseButtonBounds = new Rectangle(buttonX, buttonY, buttonWidth, buttonHeight);
         resumeButtonBounds = new Rectangle(buttonX - buttonWidth - 10, buttonY, buttonWidth, buttonHeight);
         exitButtonBounds = new Rectangle(buttonX + buttonWidth + 10, buttonY, buttonWidth, buttonHeight);
+        yesButtonBounds = new Rectangle(
+                Gdx.graphics.getWidth() / 2 -105,
+                Gdx.graphics.getHeight() / 2 - buttonHeight / 2 - 200,
+                buttonWidth,
+                buttonHeight
+        );
+        noButtonBounds = new Rectangle(
+                Gdx.graphics.getWidth() / 2 + 5,
+                Gdx.graphics.getHeight() / 2 - buttonHeight / 2 - 200,
+                buttonWidth,
+                buttonHeight
+        );
         backgroundX = 0;
     }
 
@@ -93,10 +103,6 @@ public class MainGameScreen implements Screen{
     public void render(float delta) {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        if(score==10 || score==20 || score==40) {
-            System.out.println(planet.getPLANET_SPEED());
-            System.out.println(planet.getShootInterval());
-        }
         if(score>0 && score%20==0 && increase){
             increase= false;
             float shootInterval=planet.getShootInterval();
@@ -109,8 +115,9 @@ public class MainGameScreen implements Screen{
         }
         else if(score>=0 && score%20!=0)
             increase=true;
-
         if (!isPaused) {
+            if(score==30 && End == false)
+                Successful=true;
             astronaut.handleInput();
             astronaut.update(delta);
 
@@ -122,7 +129,7 @@ public class MainGameScreen implements Screen{
                 remainingBullets--;
             }
 
-            planet.update(delta, astronaut.getPosition(),rocks);
+            planet.update(delta, astronaut.getPosition(), null);
 
             for (Bullet bullet : bullets) {
                 bullet.update(delta);
@@ -136,27 +143,6 @@ public class MainGameScreen implements Screen{
                 } else if (planet.isColliding(bullet)) {
                     planet.hit();
                     bulletIterator.remove();
-                }else if(healthPack.isColliding(bullet) && healthPack.isEffective()){
-                    Vector2 position = bullet.getPosition();
-                    healthPack.showHitEffect(position.x,position.y);
-                    healthPack.setPackTimer(6.9f);
-                    bulletIterator.remove();
-                }
-                else if(coin.isColliding(bullet) && coin.isEffective()){
-                    Vector2 position = bullet.getPosition();
-                    coin.showHitEffect(position.x,position.y);
-                    coin.setCoinTimer(27.9f);
-                    bulletIterator.remove();
-                }
-                else {
-                    for (Rock rock : rocks) {
-                        if (rock.isColliding(bullet)) {
-                            Vector2 position = bullet.getPosition();
-                            rock.showHitEffect(position.x,position.y);
-
-                            bulletIterator.remove();
-                        }
-                    }
                 }
             }
 
@@ -172,54 +158,14 @@ public class MainGameScreen implements Screen{
                     astronaut.Collision();
                     alienBulletIterator.remove();
                 }
-                else if(healthPack.isColliding(alienBullet) && healthPack.isEffective()){
-                    Vector2 position = alienBullet.getPosition();
-                    healthPack.showHitEffect(position.x,position.y);
-                    healthPack.setPackTimer(6.9f);
-                    alienBulletIterator.remove();
-                }
-                else if(coin.isColliding(alienBullet) && coin.isEffective()){
-                    Vector2 position = alienBullet.getPosition();
-                    coin.showHitEffect(position.x,position.y);
-                    coin.setCoinTimer(27.9f);
-                    alienBulletIterator.remove();
-                }
-                else{
-                    for(Rock rock: rocks){
-                        if(rock.isColliding(alienBullet)) {
-
-                            Vector2 position = alienBullet.getPosition();
-                            rock.showHitEffect(position.x,position.y);
-                            alienBulletIterator.remove();
-                        }
-
-                    }
-                }
-            }
-            if(astronaut.isCollidingWithHealthPack(healthPack) && healthPack.isEffective()) {
-                sound.playHealthBooster();
-                healthPack.setPackTimer(7.0f);
-                astronaut.consumeHealthPack();
-            }
-            if(astronaut.isCollidingWithCoin(coin) && coin.isEffective()) {
-                sound.playCoin();
-                coin.setCoinTimer(28.0f);
-                astronaut.consumeCoin();
             }
 
-            for( Rock rock:rocks){
-                if(astronaut.isCollidingWithRock(rock) && rock.effectiveness()) {
-                    rock.MakeInactive();
-                    sound.playCollision();
-                    astronaut.Collision();
-                }
-
-            }
-            if(astronaut.isCollidingWithPlanet(planet) && planet.effectiveness()){
+            if (astronaut.isCollidingWithPlanet(planet) && planet.effectiveness()) {
                 sound.playCollision();
                 planet.MakeInactive();
                 astronaut.Collision();
             }
+
             backgroundX -= 200 * delta;
             if (backgroundX <= -Gdx.graphics.getWidth()) {
                 backgroundX += Gdx.graphics.getWidth();
@@ -230,25 +176,14 @@ public class MainGameScreen implements Screen{
         batch.begin();
         batch.draw(background, backgroundX, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         batch.draw(background, backgroundX + Gdx.graphics.getWidth(), 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        for (Rock rock : rocks) {
-            rock.update(isPaused ? 0 : delta,
-                    planet.getPosition());
-            rock.render(batch,isPaused ? 0 : delta);
-        }
-        healthPack.update(isPaused ? 0 : delta,
-                planet.getPosition(),rocks);
-        if(healthPack.isEffective())
-            healthPack.render(batch,isPaused ? 0 : delta);
-        coin.update(isPaused ? 0 : delta,
-                planet.getPosition(),rocks);
-        if(coin.isEffective())
-            coin.render(batch,isPaused ? 0 : delta);
+
         for (Bullet bullet : bullets) {
             bullet.render(batch);
         }
 
         planet.render(batch, isPaused ? 0 : delta);
         astronaut.render(batch);
+
         if (isPaused) {
             batch.draw(resumeButtonTexture, resumeButtonBounds.x, resumeButtonBounds.y, resumeButtonBounds.width, resumeButtonBounds.height);
             batch.draw(exitButtonTexture, exitButtonBounds.x, exitButtonBounds.y, exitButtonBounds.width, exitButtonBounds.height);
@@ -257,13 +192,27 @@ public class MainGameScreen implements Screen{
         }
         Text.setColor(Color.GREEN);
         Text.getData().setScale(1f);
-        Text.draw(batch, "Score: " + score,Gdx.graphics.getWidth() - 380 , Gdx.graphics.getHeight() - 17);
+        Text.draw(batch, "Score: " + score, Gdx.graphics.getWidth() - 380, Gdx.graphics.getHeight() - 17);
         Text.setColor(Color.MAGENTA);
         Text.draw(batch, "Bullets: " + remainingBullets, Gdx.graphics.getWidth() - 190, Gdx.graphics.getHeight() - 17);
+
         Text.setColor(Color.RED);
         Text.getData().setScale(2f);
-        if(astronaut.isMoveOutOfScreen())
-            Text.draw(batch,"Mission End!",Gdx.graphics.getWidth()/2f-200,Gdx.graphics.getHeight()/2f + 25);
+            if (Successful) {
+                sound.pauseGameBackground();
+                Text.setColor(Color.BLUE);
+                Text.draw(batch, "Training Successful!", Gdx.graphics.getWidth() / 2f - 200, Gdx.graphics.getHeight() / 2f + 25);
+                End=true;
+                Text.draw(batch,"Want to Continue?",Gdx.graphics.getWidth()/2f -200,Gdx.graphics.getHeight()/2f -100);
+                batch.draw(yesButtonTexture, yesButtonBounds.x, yesButtonBounds.y, yesButtonBounds.width, yesButtonBounds.height);
+                batch.draw(noButtonTexture, noButtonBounds.x, noButtonBounds.y, noButtonBounds.width, noButtonBounds.height);
+                isPaused=true;
+            }
+        if (astronaut.isMoveOutOfScreen()) {
+            Text.draw(batch,"Want to try Again?",Gdx.graphics.getWidth()/2f -200,Gdx.graphics.getHeight()/2f -100);
+            batch.draw(yesButtonTexture, yesButtonBounds.x, yesButtonBounds.y, yesButtonBounds.width, yesButtonBounds.height);
+            batch.draw(noButtonTexture, noButtonBounds.x, noButtonBounds.y, noButtonBounds.width, noButtonBounds.height);
+        }
         batch.end();
 
         if (Gdx.input.isTouched()) {
@@ -279,27 +228,38 @@ public class MainGameScreen implements Screen{
                 isPaused = false;
             } else if (isPaused && exitButtonBounds.contains(touchPos.x, touchPos.y)) {
                 sound.playClick();
+                dispose();
+                game.setScreen(new StartScreen(game));
+            }else if (isPaused && yesButtonBounds.contains(touchPos.x, touchPos.y)) {
+                isPaused = false;
+                sound.playClick();
+                if (Successful) {
+                    sound.resumeGameBackground();
+                    Successful=false;
+                } else {
+                    dispose();
+                    game.setScreen(new TrainingScreen(game));
+                }
+            }
+            else if (isPaused && noButtonBounds.contains(touchPos.x, touchPos.y)) {
+                sound.playClick();
+                dispose();
                 game.setScreen(new StartScreen(game));
             }
         }
-        if(astronaut.isDestroyed()){
-            game.setScreen(new GameOverScreen(game));
+
+        if (astronaut.isDestroyed()) {
+            sound.stopGameBackground();
+            isPaused=true;
         }
     }
-    public static void UpdateScore(){
-        //remainingBullets+=10;
-        score+=10;
-    }
-    public static void UpdateRemBullets(){
-        remainingBullets+=10;
-        //score+=10;
-    }
 
-    public static void savedSound(){
-        sound.playSaved();
+    public static void UpdateScore() {
+        score += 10;
+        UpdateRemBullets();
     }
-    public static void destroySound(){
-        sound.playCollision2();
+    public static void UpdateRemBullets() {
+        remainingBullets += 10;
     }
 
     @Override
@@ -315,10 +275,6 @@ public class MainGameScreen implements Screen{
     @Override
     public void resume() {
         isPaused = false;
-    }
-
-    public static int getScore() {
-        return score;
     }
 
     @Override
@@ -341,16 +297,8 @@ public class MainGameScreen implements Screen{
             bullet.dispose();
         }
         planet.dispose();
-        for (Rock rock : rocks) {
-            rock.dispose();
-        }
-        pauseButtonTexture.dispose();
-        resumeButtonTexture.dispose();
-        exitButtonTexture.dispose();
-        Text.dispose();
         sound.stopGameBackground();
         sound.dispose();
-        healthPack.dispose();
-        coin.dispose();
+        Text.dispose();
     }
 }

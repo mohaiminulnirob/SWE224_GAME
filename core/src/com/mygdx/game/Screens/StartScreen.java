@@ -152,7 +152,6 @@ public class StartScreen implements Screen {
             if (startButtonBounds.contains(touchPos.x, touchPos.y) && !levelShow) {
                 sound.playClick();
                 levelShow = true;
-                //game.setScreen(new MainGameScreen(game));
             } else if (exitButtonBounds.contains(touchPos.x, touchPos.y)) {
                 sound.playClick();
                 Gdx.app.exit();
@@ -171,7 +170,9 @@ public class StartScreen implements Screen {
                 game.setScreen(new MainGameScreen(game));
             } else if (trainingBounds.contains(touchPos.x, touchPos.y) && levelShow) {
                 sound.playClick();
-                //game.setScreen(new TrainingScreen(game));
+                game.setScreen(new MainGameScreen(game));
+                dispose();
+                game.setScreen(new TrainingScreen(game));
             }
         }
     }
